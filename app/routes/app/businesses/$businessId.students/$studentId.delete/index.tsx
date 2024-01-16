@@ -1,5 +1,5 @@
 function DeleteStudent() {
-  return <div>one DeleteStudent</div>;
+  return <div>DeleteStudent delete</div>;
 }
 
 export default DeleteStudent;

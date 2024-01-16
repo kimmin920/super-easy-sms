@@ -1,5 +1,5 @@
 function DeleteClass() {
-  return <div>DeleteClass</div>;
+  return <div>DeleteClass delete</div>;
 }
 
 export default DeleteClass;

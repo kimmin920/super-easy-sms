@@ -1,12 +1,12 @@
 import { Outlet } from '@remix-run/react';
 
-function Classes() {
+function BuisinessRoute() {
   return (
     <div>
-      Classes-main
+      BuisinessRoute
       <Outlet />
     </div>
   );
 }
 
-export default Classes;
+export default BuisinessRoute;

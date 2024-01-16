@@ -35,17 +35,17 @@ export function MainNav({
   const params = useParams();
   const navigate = useNavigate();
 
-  const schoolId = params.schoolId;
+  const businessId = params.businessId;
 
   function onSelectValueChange(value: string) {
-    navigate(`/schools/${value}`);
+    navigate(`app/businesses/${value}`);
   }
 
-  const defaultPath = `/schools/${schoolId}`;
+  const defaultPath = `app/businesses/${businessId}`;
 
   return (
     <>
-      <Select onValueChange={onSelectValueChange} value={schoolId}>
+      <Select onValueChange={onSelectValueChange} value={businessId}>
         <SelectTrigger className='w-[180px]'>
           <SelectValue />
         </SelectTrigger>
