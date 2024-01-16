@@ -33,44 +33,19 @@ export function MainNav({
   ...props
 }: React.HTMLAttributes<HTMLElement>) {
   const params = useParams();
-  const navigate = useNavigate();
-
   const businessId = params.businessId;
 
-  function onSelectValueChange(value: string) {
-    navigate(`app/businesses/${value}`);
-  }
-
-  const defaultPath = `app/businesses/${businessId}`;
-
   return (
-    <>
-      <Select onValueChange={onSelectValueChange} value={businessId}>
-        <SelectTrigger className='w-[180px]'>
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value='vienna'>Vienna</SelectItem>
-          <SelectItem value='milan'>Milan</SelectItem>
-          <SelectItem value='rome'>Rome</SelectItem>
-        </SelectContent>
-      </Select>
-
-      <nav
-        className={cn('flex items-center space-x-4 lg:space-x-6', className)}
-        {...props}
-      >
-        {NAVS.map((nav) => {
-          return (
-            <Link
-              key={nav.href}
-              name={nav.name}
-              href={defaultPath + nav.href}
-            />
-          );
-        })}
-      </nav>
-    </>
+    <nav
+      className={cn('flex items-center space-x-4 lg:space-x-6', className)}
+      {...props}
+    >
+      {NAVS.map((nav) => {
+        return (
+          <Link key={nav.href} name={nav.name} href={businessId + nav.href} />
+        );
+      })}
+    </nav>
   );
 }
 
