@@ -9,7 +9,9 @@ import {
 } from '@remix-run/react';
 
 import styles from '././globals.css';
+
 import { cssBundleHref } from '@remix-run/css-bundle';
+import { MainNav } from './components/MainNav';
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
@@ -25,7 +27,8 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body style={{ border: '1px solid blue', height: '200px' }}>
+        <MainNav />
         <Outlet />
         <ScrollRestoration />
         <Scripts />
