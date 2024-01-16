@@ -44,11 +44,13 @@ function BuisinessRoute() {
         </div>
       </div>
 
-      <Outlet
-        context={{
-          selectedBusinessId: params.businessId,
-        }}
-      />
+      <div className='flex-1 space-y-4 p-8 pt-6'>
+        <Outlet
+          context={{
+            selectedBusinessId: params.businessId,
+          }}
+        />
+      </div>
     </>
   );
 }
