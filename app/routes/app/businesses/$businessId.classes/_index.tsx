@@ -19,7 +19,7 @@ function ClassesLayout() {
             <TabsTrigger value='overview'>Active</TabsTrigger>
             <TabsTrigger value='analytics'>Deactive</TabsTrigger>
           </TabsList>
-          <div className='ml-auto mr-4'>
+          <div className='ml-auto'>
             <ResponsiveDrawerDialog
               button={<AddButton label='Add class' />}
               form={<AddClassForm />}

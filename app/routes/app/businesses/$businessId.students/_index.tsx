@@ -1,12 +1,9 @@
-import { Outlet } from '@remix-run/react';
+import DataGrid from './_components/DataGrid';
 
 function StudentsLayout() {
   return (
     <div>
-      StudentsLayout
-      <div>
-        <Outlet />
-      </div>
+      <DataGrid />
     </div>
   );
 }
