@@ -23,6 +23,10 @@ const NAVS = [
     href: '/classes',
   },
   {
+    name: 'Automation',
+    href: '/automation',
+  },
+  {
     name: 'Settings',
     href: '/settings',
   },

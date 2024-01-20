@@ -33,7 +33,7 @@ function BuisinessRoute() {
 
   return (
     <>
-      <div className='border-b'>
+      <div className='backdrop-blur sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
         <div className='flex h-16 items-center px-4'>
           <BusinessSwitcher selectedBusinessId={params.businessId} />
           <MainNav className='mx-6' />
