@@ -135,7 +135,7 @@ export const columns: ColumnDef<StudentsDataForSMS>[] = [
     },
   },
   {
-    accessorKey: 'send-SMS',
+    accessorKey: 'message',
     header: () => <></>,
     enableHiding: false,
     cell: ({ row }) => {
@@ -143,7 +143,7 @@ export const columns: ColumnDef<StudentsDataForSMS>[] = [
         <div className='text-right font-medium'>
           <a
             href={`sms:${row.getValue('phoneNumber')}&body=${row.getValue(
-              'name'
+              'message'
             )}`}
           >
             <Button>
@@ -194,6 +194,7 @@ interface StudentsDataForSMS extends Student {
   totalPrice: number;
   status: Status;
   classesWithPayment: ClassesWithPayment[];
+  message: string;
 }
 
 export interface StudentsDataTableProps {

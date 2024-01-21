@@ -7,7 +7,7 @@ interface Props {
 
 function TemplateParser({ inputString }: Props) {
   const splitString = inputString.split(/\${(.*?)}/);
-  console.log(splitString);
+
   return (
     <div>
       {splitString.map((part, index) => {

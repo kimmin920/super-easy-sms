@@ -1,4 +1,6 @@
-import { addDays } from 'date-fns';
+import { addDays, format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+
 import React from 'react';
 import { DateRange } from 'react-day-picker';
 import { HolidayCalendar } from '~/components/HolidayCalander';
@@ -13,11 +15,15 @@ import {
   StudentsDataTableProps,
 } from './_components/StudentsDataTable';
 import { students } from '../../$businessId.students/_mockdata';
-import { getDatesBetween } from './utils';
+import { TemplateHandler, getDatesBetween } from './utils';
 import { allClasses } from '../../$businessId.classes/_mockdata';
 
+interface NonNullableDateRande {
+  from: NonNullable<DateRange['from']>;
+  to: NonNullable<DateRange['to']>;
+}
 function SuperEasySms() {
-  const [date, setDate] = React.useState<DateRange>({
+  const [date, setDate] = React.useState<NonNullableDateRande>({
     from: new Date(2022, 0, 20),
     to: addDays(new Date(2022, 0, 20), 20),
   });
@@ -60,11 +66,26 @@ function SuperEasySms() {
       return acc + cur.priceOfCounts;
     }, 0);
 
+    const message = new TemplateHandler(selectedTemplate?.message ?? '')
+      .split()
+      .replace('학생', student.name)
+      .replace('시작일', format(date.from, 'PPP', { locale: ko }))
+      .replace('종료일', format(date.to, 'PPP', { locale: ko }))
+      .replace(
+        '금액',
+        new Intl.NumberFormat('ko-KR', {
+          style: 'currency',
+          currency: 'KRW',
+        }).format(totalAmount)
+      )
+      .getParsedMessage();
+
     return {
       ...student,
       totalPrice: totalAmount,
       status: 'pending',
       classesWithPayment,
+      message,
     };
   });
 
