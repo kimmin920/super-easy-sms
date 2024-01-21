@@ -34,7 +34,6 @@ function SelectWidget({
       options={choices}
       value={choices.filter((choice) => rowData.includes(choice.value))}
       onChange={(selectedOptions) => {
-        console.log('onchange', selectedOptions);
         const values = selectedOptions.map((option) => option.value);
 
         setRowData(values);
@@ -87,6 +86,7 @@ export const selectColumn = (
   // We set other column properties so we don't have to do it manually everytime we use the column
   disableKeys: true,
   keepFocus: true,
+  cellClassName: 'classes-row',
   // We can also use the options to customise some properties
   disabled: options.disabled,
   deleteValue: () => null,
