@@ -17,6 +17,8 @@ import {
 import { students } from '../../$businessId.students/_mockdata';
 import { TemplateHandler, getDatesBetween } from './utils';
 import { allClasses } from '../../$businessId.classes/_mockdata';
+import TemplateGenerator from './_components/TemplateGenerator';
+import { Button } from '@/components/ui/button';
 
 interface NonNullableDateRande {
   from: NonNullable<DateRange['from']>;

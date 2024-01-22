@@ -41,6 +41,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import TipTap from './templateEditor';
 
 // NOTE: this is mock
 export const messageTemplates = [
@@ -173,27 +174,8 @@ export default function SMSTemplateSwitcher({
               <Label htmlFor='name'>Template name</Label>
               <Input id='name' placeholder='Acme Inc.' />
             </div>
-            <div className='space-y-2'>
-              <Label htmlFor='plan'>Subscription plan</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder='Select a plan' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='free'>
-                    <span className='font-medium'>Free</span> -{' '}
-                    <span className='text-muted-foreground'>
-                      Trial for two weeks
-                    </span>
-                  </SelectItem>
-                  <SelectItem value='pro'>
-                    <span className='font-medium'>Pro</span> -{' '}
-                    <span className='text-muted-foreground'>
-                      $9/month per user
-                    </span>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+            <div className='px-3 py-2 space-y-2 max-h-52 overflow-y-auto rounded-md border border-input bg-transparent'>
+              <TipTap />
             </div>
           </div>
         </div>

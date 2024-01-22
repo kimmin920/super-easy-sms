@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { NavLink, Outlet, useMatch } from '@remix-run/react';
 
 function Automation() {
-  const match = useMatch('/app/businesses/personal/automation/');
+  const match = useMatch('/app/businesses/:businessId/automation/');
 
   return (
     <div>
