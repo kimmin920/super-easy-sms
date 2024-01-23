@@ -12,3 +12,7 @@
   box-decoration-break: clone;
   padding: 0.1rem 0.3rem;
 }
+
+div[data-tippy-root] {
+  pointer-events: all;
+}

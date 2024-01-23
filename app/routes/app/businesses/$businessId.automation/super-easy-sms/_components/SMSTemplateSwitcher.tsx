@@ -22,26 +22,17 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import TipTap from './templateEditor';
+
+import AddTemplateForm from './AddTemplateForm';
 
 // NOTE: this is mock
 export const messageTemplates = [
@@ -168,26 +159,8 @@ export default function SMSTemplateSwitcher({
             Add a new Template to manage products and customers.
           </DialogDescription>
         </DialogHeader>
-        <div>
-          <div className='space-y-4 py-2 pb-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='name'>Template name</Label>
-              <Input id='name' placeholder='Acme Inc.' />
-            </div>
-            <div className='px-3 py-2 space-y-2 max-h-52 overflow-y-auto rounded-md border border-input bg-transparent'>
-              <TipTap />
-            </div>
-          </div>
-        </div>
-        <DialogFooter>
-          <Button
-            variant='outline'
-            onClick={() => setShowNewBusinessDialog(false)}
-          >
-            Cancel
-          </Button>
-          <Button type='submit'>Continue</Button>
-        </DialogFooter>
+
+        <AddTemplateForm close={() => setShowNewBusinessDialog(false)} />
       </DialogContent>
     </Dialog>
   );

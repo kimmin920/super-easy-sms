@@ -28,6 +28,7 @@ interface FormDataType {
   description?: string;
   type: string;
 }
+
 const CLASS_FORM_DATA: FormDataType[] = [
   {
     label: 'name',
