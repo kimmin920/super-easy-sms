@@ -10,6 +10,13 @@ import {
 import 'react-datasheet-grid/dist/style.css';
 import { allClasses } from '../../$businessId.classes/_mockdata';
 import { students } from '../_mockdata';
+import { ContextMenuItem } from 'react-datasheet-grid/dist/types';
+
+const css = `
+  .dsg-cell.classes-row {
+    overflow: scroll;
+  }
+`;
 
 const emailColumn = createTextColumn({
   parseUserInput: (string) => string + '@',
@@ -34,7 +41,7 @@ function DataGrid() {
     },
     {
       ...keyColumn(
-        'class',
+        'classes',
         selectColumn({
           choices: allClasses.map((eachClass) => ({
             value: eachClass.id,
@@ -43,11 +50,22 @@ function DataGrid() {
         })
       ),
       title: 'class',
-      flex: 1,
     },
   ];
 
-  return <DataSheetGrid value={students} columns={columns} />;
+  return (
+    <>
+      <style>{css}</style>
+      <DataSheetGrid
+        value={students}
+        columns={columns}
+        rowHeight={({ rowData, rowIndex }) => {
+          return 50;
+        }}
+      />
+      ;
+    </>
+  );
 }
 
 export default DataGrid;

@@ -21,41 +21,99 @@ export const SAMPLE_CLASS_IMGS = [
   },
 ];
 
-export const allClasses = [
+type Day =
+  | 'Sunday'
+  | 'Monday'
+  | 'Tuesday'
+  | 'Wednesday'
+  | 'Thursday'
+  | 'Friday'
+  | 'Saturday';
+
+export interface Class {
+  id: string;
+  name: string;
+  coverImg: string;
+  teacher: string;
+  description: string;
+  price: number;
+  priceDescription: string;
+  days: Day[];
+  numberOfClass: number;
+  pricePerClass: number;
+}
+
+export const allClasses: Class[] = [
   {
-    id: '1',
+    id: 'piano-a',
     name: 'Piano-A',
     coverImg: SAMPLE_CLASS_IMGS[0].imgSrc,
     teacher: 'hyunkyung kim',
     description: '',
     price: 100000,
     priceDescription: '/월',
+    days: ['Monday', 'Wednesday'],
+    numberOfClass: 12,
+    pricePerClass: 16000,
   },
   {
-    id: '2',
+    id: 'piano-b',
     name: 'Piano-B',
     coverImg: SAMPLE_CLASS_IMGS[1].imgSrc,
     teacher: 'hyunkyung kim',
     description: '',
     price: 200000,
     priceDescription: '/월',
+    days: ['Monday', 'Wednesday'],
+    numberOfClass: 4,
+    pricePerClass: 20000,
   },
   {
-    id: '3',
+    id: 'violine-a',
     name: 'Violine-A',
     coverImg: SAMPLE_CLASS_IMGS[2].imgSrc,
     teacher: 'hyunkyung kim',
     description: '',
     price: 300000,
     priceDescription: '/월',
+    days: ['Monday'],
+    numberOfClass: 1,
+    pricePerClass: 50000,
   },
   {
-    id: '4',
+    id: 'violine-b',
     name: 'Violine-B',
     coverImg: SAMPLE_CLASS_IMGS[3].imgSrc,
     teacher: 'hyunkyung kim',
     description: '',
     price: 400000,
     priceDescription: '/회',
+    days: ['Wednesday', 'Thursday'],
+    numberOfClass: 8,
+    pricePerClass: 25000,
+  },
+  {
+    id: 'guitar-c',
+    name: 'Guitar-C',
+    coverImg: SAMPLE_CLASS_IMGS[3].imgSrc,
+    teacher: 'hyunkyung kim',
+    description: '',
+    price: 400000,
+    priceDescription: '/회',
+    days: ['Wednesday', 'Thursday'],
+    numberOfClass: 8,
+    pricePerClass: 25000,
+  },
+  {
+    id: 'guitar-d',
+    name: 'Guitar-D',
+    coverImg: SAMPLE_CLASS_IMGS[3].imgSrc,
+    teacher: 'hyunkyung kim',
+    description: '',
+    price: 400000,
+    priceDescription: '/회',
+    days: ['Wednesday', 'Thursday'],
+    numberOfClass: 8,
+    pricePerClass: 25000,
   },
 ];

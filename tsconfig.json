@@ -3,7 +3,10 @@
     "remix.env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "app/routes/classes._indextsx"
+    "app/routes/classes._indextsx",
+    "app/routes/app/businesses/$businessId.automation/super-easy-sms/_components/templateEditor/suggestion.js",
+    "app/routes/app/businesses/$businessId.automation/super-easy-sms/_components/templateEditor/MentionList.jsx",
+    "app/routes/app/businesses/$businessId.automation/super-easy-sms/_components/templateEditor/index.spec.js"
   ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],

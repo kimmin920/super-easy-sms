@@ -1,0 +1,120 @@
+{
+  "content": [
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "안녕하세요 "
+        },
+        {
+          "type": "mention",
+          "attrs": {
+            "id": "학생이름",
+            "label": null
+          }
+        },
+        {
+          "type": "text",
+          "text": " 부모님,"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "빈예술음악학원입니다."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "이번 달 정산내역을 보내드립니다."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "mention",
+          "attrs": {
+            "id": "정산시작일",
+            "label": null
+          }
+        },
+        {
+          "type": "text",
+          "text": " 부터 "
+        },
+        {
+          "type": "mention",
+          "attrs": {
+            "id": "정산종료일",
+            "label": null
+          }
+        },
+        {
+          "type": "text",
+          "text": " 까지의 금액이며"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "mention",
+          "attrs": {
+            "id": "정산금액",
+            "label": null
+          }
+        },
+        {
+          "type": "text",
+          "text": " 을 농협 111-111-111로 보내주시면 됩니다."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "감사합니다. 아래 상세한 정산 내역을 보내드립니다."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "text",
+          "text": "추운데 조심하세요."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "content": [
+        {
+          "type": "mention",
+          "attrs": {
+            "id": "정산내역",
+            "label": null
+          }
+        },
+        {
+          "type": "text",
+          "text": " "
+        }
+      ]
+    }
+  ],
+  "type": "doc"
+}
