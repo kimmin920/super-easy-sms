@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { ControllerRenderProps, useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { cn } from '@/lib/utils';
@@ -17,9 +17,14 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { Form as RemixForm, useSubmit } from '@remix-run/react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { SAMPLE_CLASS_IMGS } from '../_mockdata';
+import { createClient } from '@supabase/supabase-js';
+import { redirect } from '@remix-run/node';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 
 interface FormDataType {
   id: keyof AppearanceFormValues;
@@ -27,7 +32,42 @@ interface FormDataType {
   defaultLabel: string | number;
   description?: string;
   type: string;
+  options?: OptionsType[];
 }
+
+interface OptionsType {
+  value: string;
+  status: 'enabled' | 'disabled';
+  label: string;
+}
+
+const daysOptions: OptionsType[] = [
+  { value: 'MONDAY', status: 'enabled', label: 'Monday' },
+  { value: 'TUESDAY', status: 'enabled', label: 'Tuesday' },
+  { value: 'WEDNESDAY', status: 'enabled', label: 'Wednesday' },
+  { value: 'THURSDAY', status: 'enabled', label: 'Thursday' },
+  { value: 'FRIDAY', status: 'enabled', label: 'Friday' },
+  { value: 'SATURDAY', status: 'enabled', label: 'Saturday' },
+  { value: 'SUNDAY', status: 'enabled', label: 'Sunday' },
+];
+
+const billingFrequencyOptions: OptionsType[] = [
+  {
+    value: 'MONTHLY',
+    label: 'MONTHLY',
+    status: 'enabled',
+  },
+  {
+    value: 'WEEKLY',
+    label: 'WEEKLY',
+    status: 'disabled',
+  },
+  {
+    value: 'DAILY',
+    label: 'DAILY',
+    status: 'disabled',
+  },
+];
 
 const CLASS_FORM_DATA: FormDataType[] = [
   {
@@ -54,17 +94,37 @@ const CLASS_FORM_DATA: FormDataType[] = [
     id: 'price',
     type: 'number',
   },
-  // {
-  //   label: 'coverImg',
-  //   defaultLabel: SAMPLE_CLASS_IMGS[0].imgSrc,
-  //   id: 'coverImg',
-  //   type: 'image',
-  // },
+  {
+    label: 'coverImgSrc',
+    defaultLabel: SAMPLE_CLASS_IMGS[0].imgSrc,
+    id: 'coverImgSrc',
+    type: 'image',
+  },
   {
     label: 'priceDescription',
     defaultLabel: 'priceDescription...',
     type: 'text',
     id: 'priceDescription',
+  },
+  {
+    label: 'billingFrequency',
+    defaultLabel: 'billingFrequency...',
+    type: 'radio',
+    id: 'billingFrequency',
+    options: billingFrequencyOptions,
+  },
+  {
+    label: 'scheduledDays',
+    defaultLabel: 'scheduledDays...',
+    type: 'multiple-checkbox',
+    id: 'scheduledDays',
+    options: daysOptions,
+  },
+  {
+    label: 'classCount',
+    defaultLabel: 'classCount...',
+    type: 'number',
+    id: 'classCount',
   },
 ];
 
@@ -79,34 +139,49 @@ const appearanceFormSchema = z.object({
   teacher: z.string(),
   price: z.number(),
   priceDescription: z.string(),
-  coverImg: z.string({
+  coverImgSrc: z.string({
     required_error: 'Please select a img or upload.',
   }),
+  scheduledDays: z.array(
+    z.enum([
+      'MONDAY',
+      'TUESDAY',
+      'WEDNESDAY',
+      'THURSDAY',
+      'FRIDAY',
+      'SATURDAY',
+      'SUNDAY',
+    ] as const)
+  ),
+  billingFrequency: z.enum(['MONTHLY', 'WEEKLY', 'DAILY']),
+  classCount: z.number(),
 });
 
 const defaultValues: Partial<AppearanceFormValues> = {
-  coverImg: SAMPLE_CLASS_IMGS[0].name,
+  coverImgSrc: SAMPLE_CLASS_IMGS[0].imgSrc,
   name: '',
   description: '',
   teacher: '',
   price: 100,
   priceDescription: '',
+  billingFrequency: 'MONTHLY',
+  classCount: 0,
+  scheduledDays: [],
 };
 
 type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
 
 function AddClassForm({ className }: React.ComponentProps<'form'>) {
-  // const { addClass } = useClass();
+  // const submit = useSubmit();
 
   const form = useForm<AppearanceFormValues>({
     resolver: zodResolver(appearanceFormSchema),
     defaultValues,
   });
 
-  function onSubmit(formValues: AppearanceFormValues) {
-    console.log('submitted');
-    // addClass({ ...formValues, id: new Date().toString() });
-  }
+  // function onSubmit(formValues: AppearanceFormValues) {
+  //   submit(formValues, { method: 'POST', action: '' });
+  // }
 
   function numberTypeOverride(each: FormDataType) {
     return (
@@ -116,86 +191,153 @@ function AddClassForm({ className }: React.ComponentProps<'form'>) {
 
   return (
     <Form {...form}>
-      <form
+      <RemixForm
+        action=''
+        method='post'
         className={cn('grid items-start gap-4', className)}
-        onSubmit={form.handleSubmit(onSubmit)}
+        // onSubmit={form.handleSubmit(onSubmit)}
       >
-        {CLASS_FORM_DATA.map((each) => (
-          <FormField
-            key={each.id}
-            control={form.control}
-            name={each.id}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{each.label}</FormLabel>
-                <FormControl>
-                  <Input
-                    className='focus-visible:ring-1 focus-visible:ring-offset-0'
-                    placeholder={each.defaultLabel.toString()}
-                    type={each.type}
-                    {...field}
-                    {...numberTypeOverride(each)}
-                  />
-                </FormControl>
-                <FormDescription>{each.description}</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        ))}
-        <ImgFormField form={form} />
+        {CLASS_FORM_DATA.map((each) => {
+          return (
+            <FormField
+              key={each.id}
+              control={form.control}
+              name={each.id}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{each.label}</FormLabel>
+                  <FormControl>
+                    {each.type === 'multiple-checkbox' ? (
+                      <MultipleCheckbox
+                        options={each.options ?? []}
+                        field={field}
+                      />
+                    ) : each.type === 'radio' ? (
+                      <RadioGroupInput
+                        options={each.options ?? []}
+                        field={field}
+                      />
+                    ) : each.id === 'coverImgSrc' ? (
+                      <ImgFormField key={each.id} field={field} />
+                    ) : (
+                      <Input
+                        className='focus-visible:ring-1 focus-visible:ring-offset-0'
+                        placeholder={each.defaultLabel.toString()}
+                        type={each.type}
+                        {...field}
+                        {...numberTypeOverride(each)}
+                      />
+                    )}
+                  </FormControl>
+                  <FormDescription>{each.description}</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          );
+        })}
         <Button type='submit'>Save changes</Button>
-      </form>
+      </RemixForm>
     </Form>
   );
 }
 
-function ImgFormField({ form }: { form: any }) {
+function ImgFormField({ field }: { field: ControllerRenderProps }) {
   return (
-    <FormField
-      control={form.control}
-      name='coverImg'
-      render={({ field }) => (
-        <FormItem className='space-y-1'>
-          <FormLabel>Cover Image</FormLabel>
-          <FormDescription>Select the cover image for class.</FormDescription>
-          <FormMessage />
-          <RadioGroup
-            onValueChange={field.onChange}
-            defaultValue={field.value}
-            className='grid pt-2'
-          >
-            <ScrollArea>
-              <div className='flex space-x-4 pb-4'>
-                {SAMPLE_CLASS_IMGS.map((img) => {
-                  return (
-                    <FormItem className='w-[150px]' key={img.name}>
-                      <FormLabel className='[&:has([data-state=checked])>div]:border-primary'>
-                        <FormControl>
-                          <RadioGroupItem
-                            value={img.imgSrc}
-                            className='sr-only'
-                          />
-                        </FormControl>
-                        <div className='rounded-md border-2 border-muted p-1'>
-                          <img
-                            alt={img.name}
-                            className='object-cover h-auto w-auto aspect-square'
-                            src={img.imgSrc}
-                            height='100%'
-                          />
-                        </div>
-                      </FormLabel>
-                    </FormItem>
-                  );
-                })}
-              </div>
-              <ScrollBar orientation='horizontal' />
-            </ScrollArea>
-          </RadioGroup>
-        </FormItem>
-      )}
-    />
+    <RadioGroup
+      onValueChange={field.onChange}
+      defaultValue={field.value}
+      className='grid pt-2'
+      name={field.name}
+    >
+      <ScrollArea>
+        <div className='flex space-x-4 pb-4'>
+          {SAMPLE_CLASS_IMGS.map((img) => {
+            return (
+              <FormItem className='w-[150px]' key={img.name}>
+                <FormLabel className='[&:has([data-state=checked])>div]:border-primary'>
+                  <FormControl>
+                    <RadioGroupItem value={img.imgSrc} className='sr-only' />
+                  </FormControl>
+                  <div className='rounded-md border-2 border-muted p-1'>
+                    <img
+                      alt={img.name}
+                      className='object-cover h-auto w-auto aspect-square'
+                      src={img.imgSrc}
+                      height='100%'
+                    />
+                  </div>
+                </FormLabel>
+              </FormItem>
+            );
+          })}
+        </div>
+        <ScrollBar orientation='horizontal' />
+      </ScrollArea>
+    </RadioGroup>
   );
 }
+
+function MultipleCheckbox({
+  field,
+  options,
+}: {
+  field: ControllerRenderProps;
+  options: OptionsType[];
+}) {
+  return (
+    <>
+      <input
+        type='text'
+        hidden
+        name={field.name}
+        value={`{${field.value}}`}
+      ></input>
+      {options.map((option) => (
+        <div key={option.value} className='flex items-center space-x-2'>
+          <Checkbox
+            id={option.value}
+            name={field.name + 'checkbox'}
+            value={option.value}
+            checked={field.value?.includes(option.value)}
+            onCheckedChange={(checked) => {
+              return checked
+                ? field.onChange([...field.value, option.value])
+                : field.onChange(
+                    field.value?.filter(
+                      (value: string) => value !== option.value
+                    )
+                  );
+            }}
+          />
+          <Label htmlFor={option.value}>{option.label}</Label>
+        </div>
+      ))}
+    </>
+  );
+}
+
+function RadioGroupInput({
+  field,
+  options,
+}: {
+  field: ControllerRenderProps;
+  options: OptionsType[];
+}) {
+  return (
+    <RadioGroup
+      onValueChange={field.onChange}
+      defaultValue={field.value}
+      name={field.name}
+    >
+      {options.map((option) => (
+        <div key={option.value} className='flex items-center space-x-2'>
+          <RadioGroupItem value={option.value} id={option.value} />
+          <Label htmlFor={option.value}>{option.label}</Label>
+        </div>
+      ))}
+    </RadioGroup>
+  );
+}
+
 export default AddClassForm;

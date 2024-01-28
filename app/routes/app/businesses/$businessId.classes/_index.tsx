@@ -7,10 +7,64 @@ import AddButton from 'app/components/AddButton';
 import { ResponsiveDrawerDialog } from 'app/components/ResponsiveDrawerDialog';
 import AddClassForm from './_components/AddClassForm';
 import { ClassCard } from './_components/ClassCard';
-import { allClasses } from './_mockdata';
-import { NavLink } from '@remix-run/react';
+import { NavLink, useLoaderData } from '@remix-run/react';
+import { createClient } from '@supabase/supabase-js';
+
+export const action = async ({ request }: { request: Request }) => {
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!
+  );
+
+  const formData = await request.formData();
+  const values = Object.fromEntries(formData);
+
+  const {
+    name,
+    coverImgSrc,
+    description,
+    teacher,
+    price,
+    priceDescription,
+    scheduledDays,
+    billingFrequency,
+    classCount,
+  } = values;
+
+  const { data, error } = await supabase.from('classes').insert({
+    name,
+    coverImgSrc,
+    description,
+    teacher,
+    price,
+    priceDescription,
+    scheduledDays: scheduledDays,
+    billingFrequency,
+    classCount,
+  });
+
+  return { data, error };
+};
+
+export const loader = async () => {
+  const superbase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!
+  );
+
+  const { data: classes, error: classesError } = await superbase
+    .from('classes')
+    .select('*');
+
+  return {
+    classes: classes ?? [],
+    classesError,
+  };
+};
 
 function ClassesLayout() {
+  const { classes } = useLoaderData<typeof loader>();
+
   return (
     <Tabs defaultValue='overview' className='space-y-4'>
       <>
@@ -40,7 +94,7 @@ function ClassesLayout() {
 
         <ScrollArea>
           <div className='flex space-x-4 pb-4'>
-            {allClasses.map((eachClass) => (
+            {classes.map((eachClass) => (
               <NavLink key={eachClass.name} to={eachClass.id}>
                 <ClassCard
                   album={eachClass}

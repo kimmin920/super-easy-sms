@@ -31,7 +31,7 @@ export function ClassCard({
     <div className={cn('space-y-3', className)} {...props}>
       <div className='overflow-hidden rounded-md'>
         <img
-          src={album.coverImg}
+          src={album.coverImgSrc}
           alt={album.name}
           width={width}
           height={height}

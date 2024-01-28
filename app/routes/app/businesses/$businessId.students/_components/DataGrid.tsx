@@ -8,9 +8,11 @@ import {
   textColumn,
 } from 'react-datasheet-grid';
 import 'react-datasheet-grid/dist/style.css';
-import { allClasses } from '../../$businessId.classes/_mockdata';
-import { students } from '../_mockdata';
-import { ContextMenuItem } from 'react-datasheet-grid/dist/types';
+import { Class, allClasses } from '../../$businessId.classes/_mockdata';
+import { Student } from '../_mockdata';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Form } from '@remix-run/react';
 
 const css = `
   .dsg-cell.classes-row {
@@ -22,9 +24,14 @@ const emailColumn = createTextColumn({
   parseUserInput: (string) => string + '@',
 });
 
-function DataGrid() {
-  // const { students } = useStudents();
-  // const { class: allClass } = useClass();
+type Props = {
+  data: Student[];
+  classes: Class[];
+  updateData: (students: Student[]) => void;
+};
+
+function DataGrid({ data, classes, updateData }: Props) {
+  const [studentsData, setStudentsData] = useState(data);
 
   const columns = [
     {
@@ -41,29 +48,39 @@ function DataGrid() {
     },
     {
       ...keyColumn(
-        'classes',
+        'classIds',
         selectColumn({
-          choices: allClasses.map((eachClass) => ({
+          choices: classes.map((eachClass) => ({
             value: eachClass.id,
             label: eachClass.name,
           })),
         })
       ),
-      title: 'class',
+      title: 'classes',
     },
   ];
+
+  function handleClick() {
+    updateData(studentsData);
+  }
 
   return (
     <>
       <style>{css}</style>
       <DataSheetGrid
-        value={students}
+        value={studentsData}
         columns={columns}
         rowHeight={({ rowData, rowIndex }) => {
           return 50;
         }}
+        onChange={setStudentsData}
       />
-      ;
+
+      <Form action='edit'>
+        <Button type='submit' onClick={handleClick}>
+          SUBMIT
+        </Button>
+      </Form>
     </>
   );
 }
