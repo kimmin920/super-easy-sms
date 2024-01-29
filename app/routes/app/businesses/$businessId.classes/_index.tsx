@@ -97,7 +97,7 @@ function ClassesLayout() {
             {classes.map((eachClass) => (
               <NavLink key={eachClass.name} to={eachClass.id}>
                 <ClassCard
-                  album={eachClass}
+                  course={eachClass}
                   className='w-[250px]'
                   aspectRatio='portrait'
                   width={250}

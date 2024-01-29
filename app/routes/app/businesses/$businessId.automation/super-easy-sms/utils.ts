@@ -1,3 +1,4 @@
+import { JSONContent } from '@tiptap/react';
 import { addDays } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 
@@ -80,4 +81,69 @@ export class TemplateHandler {
 
     return '';
   }
+}
+
+export interface ContentItem {
+  type: string;
+  id?: string;
+  label?: string;
+  text?: string;
+}
+
+export function parseContent(content: JSONContent['content']) {
+  const result: ContentItem[] = [];
+
+  if (!content) {
+    return [];
+  }
+
+  for (const item of content) {
+    if (item.type === 'paragraph') {
+      result.push({ type: 'space' }, ...parseContent(item.content));
+    } else if (item.type === 'mention') {
+      result.push({
+        type: 'mention',
+        id: item.attrs?.id,
+        label: item.attrs?.label,
+        text: item.text,
+      });
+    } else if (item.type === 'text') {
+      result.push(item as ContentItem);
+    }
+  }
+
+  return result;
+}
+
+export function templateMessageInjector(
+  content: JSONContent['content'],
+  mentionValueMap: Record<string, unknown>
+) {
+  if (!content) {
+    return null;
+  }
+
+  const parsed = parseContent(content);
+
+  const result = parsed
+    .map((each) => {
+      if (each.type === 'space') {
+        return ' ';
+      }
+
+      if (each.type === 'text') {
+        return each.text;
+      }
+
+      if (each.type === 'mention') {
+        console.log(each.id, mentionValueMap);
+        const value = each.id ? mentionValueMap[each.id] : 'ERROR-NO-ID';
+        return value;
+      }
+
+      return each.text;
+    })
+    .join('');
+
+  return result;
 }

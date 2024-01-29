@@ -1,14 +1,12 @@
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -16,6 +14,8 @@ import TemplateEditorTipTap from './templateEditor';
 import TEMPLATE_MOCK_CONTENT from './templateEditor/template.mock.json';
 import { DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { useSubmit } from '@remix-run/react';
+import { FormEvent, useRef } from 'react';
 
 const schema = z.object({
   title: z
@@ -62,16 +62,34 @@ function AddTemplateForm({ close }: Props) {
     defaultValues,
   });
 
-  function onSubmit(formValues: SchemaFormValues) {
-    console.log('submitted: ', formValues);
-    // addClass({ ...formValues, id: new Date().toString() });
+  const formRef = useRef<HTMLFormElement>(null);
+
+  const submit = useSubmit();
+
+  function onSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (!formRef.current) {
+      return;
+    }
+
+    const formData = new FormData(formRef.current);
+    const template = form.getValues('template');
+
+    formData.set('template', JSON.stringify(template));
+    submit(formData, { method: 'POST', action: '' });
+    close();
+    return true;
   }
 
   return (
     <Form {...form}>
       <form
+        ref={formRef}
+        action=''
+        method='post'
         className='grid items-start gap-4'
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={onSubmit}
       >
         <FormField
           control={form.control}

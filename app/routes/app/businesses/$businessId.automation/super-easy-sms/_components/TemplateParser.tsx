@@ -1,25 +1,28 @@
 import React from 'react';
 import { TemplateVariable } from './TemplateVariable';
 
+import { parseContent } from '../utils';
 interface Props {
-  inputString: string;
+  template: string;
 }
 
-function TemplateParser({ inputString }: Props) {
-  const splitString = inputString.split(/\${(.*?)}/);
+function TemplateParser({ template }: Props) {
+  const parsedTemplate = template ? JSON.parse(template) : null;
+
+  const output = parseContent(parsedTemplate?.content);
 
   return (
     <div>
-      {splitString.map((part, index) => {
-        if (index % 2 === 1) {
+      {output.map((content, index) => {
+        if (content.type === 'mention') {
           // Wrap `${text}` in a div
           return (
             <span key={index}>
-              <TemplateVariable label={part} />
+              <TemplateVariable label={content.id ?? ''} />
             </span>
           );
         } else {
-          return <React.Fragment key={index}>{part}</React.Fragment>;
+          return <React.Fragment key={index}>{content.text}</React.Fragment>;
         }
       })}
     </div>

@@ -21,26 +21,28 @@ export const SAMPLE_CLASS_IMGS = [
   },
 ];
 
-type Day =
-  | 'Sunday'
-  | 'Monday'
-  | 'Tuesday'
-  | 'Wednesday'
-  | 'Thursday'
-  | 'Friday'
-  | 'Saturday';
+export type DayInString =
+  | 'SUNDAY'
+  | 'MONDAY'
+  | 'TUESDAY'
+  | 'WEDNESDAY'
+  | 'THURSDAY'
+  | 'FRIDAY'
+  | 'SATURDAY';
 
 export interface Class {
   id: string;
   name: string;
-  coverImg: string;
+  coverImgSrc: string;
   teacher: string;
   description: string;
   price: number;
   priceDescription: string;
-  days: Day[];
-  numberOfClass: number;
-  pricePerClass: number;
+  scheduledDays: DayInString[];
+  classCount: number;
+  // numberOfClass: number;
+  // pricePerClass: number;
+  billingFrequency: string;
 }
 
 export const allClasses: Class[] = [

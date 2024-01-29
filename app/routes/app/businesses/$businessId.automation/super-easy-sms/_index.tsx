@@ -5,26 +5,79 @@ import React from 'react';
 import { DateRange } from 'react-day-picker';
 import { HolidayCalendar } from '~/components/HolidayCalander';
 import { DatePickerWithRange } from '~/components/DatePickerWithRange';
-import SMSTemplateSwitcher, {
-  messageTemplates,
-} from './_components/SMSTemplateSwitcher';
+import SMSTemplateSwitcher from './_components/SMSTemplateSwitcher';
 import TemplateParser from './_components/TemplateParser';
 import {
   ClassesWithPayment,
   StudentsDataTable,
   StudentsDataTableProps,
 } from './_components/StudentsDataTable';
-import { students } from '../../$businessId.students/_mockdata';
-import { TemplateHandler, getDatesBetween } from './utils';
-import { allClasses } from '../../$businessId.classes/_mockdata';
-import TemplateGenerator from './_components/TemplateGenerator';
-import { Button } from '@/components/ui/button';
+
+import {
+  TemplateHandler,
+  getDatesBetween,
+  templateMessageInjector,
+} from './utils';
+import {
+  Class,
+  DayInString,
+  allClasses,
+} from '../../$businessId.classes/_mockdata';
+import { createClient } from '@supabase/supabase-js';
+import { useLoaderData } from '@remix-run/react';
 
 interface NonNullableDateRande {
   from: NonNullable<DateRange['from']>;
   to: NonNullable<DateRange['to']>;
 }
+
+export const loader = async () => {
+  const superbase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!
+  );
+
+  const { data: students, error: studentsError } = await superbase
+    .from('students')
+    .select(`*, classes: classes(*), classIds: classes(id)`);
+
+  const { data: classes, error: classesError } = await superbase
+    .from('classes')
+    .select('*');
+
+  const { data: templates, error: templatesError } = await superbase
+    .from('sms_templates')
+    .select('*');
+
+  return {
+    students: students ?? [],
+    classes: classes ?? [],
+    templates: templates ?? [],
+    templatesError,
+    studentsError,
+    classesError,
+  };
+};
+
+export const action = async ({ request }: { request: Request }) => {
+  const supabase = createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!
+  );
+
+  const formData = await request.formData();
+  const values = Object.fromEntries(formData);
+
+  const { data, error } = await supabase
+    .from('sms_templates')
+    .insert([{ template: values.template, title: values.title }]);
+
+  return { data, error };
+};
+
 function SuperEasySms() {
+  const { students, classes, templates } = useLoaderData<typeof loader>();
+
   const [date, setDate] = React.useState<NonNullableDateRande>({
     from: new Date(2022, 0, 20),
     to: addDays(new Date(2022, 0, 20), 20),
@@ -32,30 +85,37 @@ function SuperEasySms() {
 
   const [holidays, setHolidays] = React.useState<Date[]>([]);
 
-  const selectedTemplate = messageTemplates.find(
-    (template) => template.value === '1'
-  );
+  const [selectedTemplateId, setSelectedTemplateId] = React.useState<
+    number | null
+  >(null);
 
   const workingDates = getDatesBetween(date, holidays);
 
+  function onClickTemplate(id: number) {
+    setSelectedTemplateId(id);
+  }
+
+  const selectedTemplate = templates.find(
+    (each) => each.id === selectedTemplateId
+  );
+
   const mainData: StudentsDataTableProps['data'] = students.map((student) => {
     const classesWithPayment: Array<ClassesWithPayment | null> = student.classes
-      .map((eachClass) => {
-        const currentClass = allClasses.find((each) => each.id === eachClass);
-
-        if (!currentClass) {
-          return null;
-        }
-
+      .map((eachClass: Class) => {
         const classDates = workingDates.filter((each) => {
-          const day = each.toLocaleDateString('en-US', { weekday: 'long' });
-          return currentClass?.days.includes(day);
+          const day = each.toLocaleDateString('en-US', {
+            weekday: 'long',
+          }) as DayInString;
+
+          return eachClass.scheduledDays?.includes(day);
         });
 
+        const pricePerClass = eachClass.price / eachClass.classCount;
+
         return {
-          ...currentClass,
+          ...eachClass,
           activeClassDates: classDates,
-          priceOfCounts: currentClass.pricePerClass * classDates.length,
+          priceOfCounts: pricePerClass,
         };
       })
       .filter((each) => each !== null);
@@ -68,19 +128,19 @@ function SuperEasySms() {
       return acc + cur.priceOfCounts;
     }, 0);
 
-    const message = new TemplateHandler(selectedTemplate?.message ?? '')
-      .split()
-      .replace('학생', student.name)
-      .replace('시작일', format(date.from, 'PPP', { locale: ko }))
-      .replace('종료일', format(date.to, 'PPP', { locale: ko }))
-      .replace(
-        '금액',
-        new Intl.NumberFormat('ko-KR', {
-          style: 'currency',
-          currency: 'KRW',
-        }).format(totalAmount)
-      )
-      .getParsedMessage();
+    const template = selectedTemplate?.template
+      ? JSON.parse(selectedTemplate?.template)
+      : null;
+
+    const message = templateMessageInjector(template?.content, {
+      학생이름: student.name,
+      정산시작일: format(date.from, 'PPP', { locale: ko }),
+      정산종료일: format(date.to, 'PPP', { locale: ko }),
+      정산금액: new Intl.NumberFormat('ko-KR', {
+        style: 'currency',
+        currency: 'KRW',
+      }).format(totalAmount),
+    });
 
     return {
       ...student,
@@ -117,10 +177,15 @@ function SuperEasySms() {
         </div>
 
         <div>
-          템플릿: <SMSTemplateSwitcher selectedBusinessId={'1'} />
+          템플릿:
+          <SMSTemplateSwitcher
+            selectedTemplateId={selectedTemplateId}
+            messageTemplates={templates}
+            onClickTemplate={onClickTemplate}
+          />
           <div>
             미리보기:
-            {<TemplateParser inputString={selectedTemplate?.message ?? ''} />}
+            <TemplateParser template={selectedTemplate?.template ?? ''} />
           </div>
         </div>
       </div>

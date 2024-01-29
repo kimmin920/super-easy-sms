@@ -35,31 +35,10 @@ import {
 import AddTemplateForm from './AddTemplateForm';
 
 // NOTE: this is mock
-export const messageTemplates = [
-  {
-    label: 'template A',
-    value: '1',
-    message:
-      '${학생} 어머니, 안녕하세요! 즐거운 돈내는 날입니다. ${학생}의 이번 정산기간 ${시작일} ~ ${종료일}의 비용은 ${금액} 입니다. 즐거운 한가위 보내세요 호호',
-  },
-  {
-    label: 'template B',
-    value: '2',
-    message:
-      '${학생} 어머니, ${학생}의 이번 정산기간 ${시작일} ~ ${종료일}의 비용은 ${금액} 입니다.',
-  },
-  {
-    label: 'template C',
-    value: '3',
-    message:
-      '${학생} 어머니, ${학생}의 이번 정산기간 ${시작일} ~ ${종료일}의 비용은 ${금액} 입니다.',
-  },
-];
-
 const switcherGroup = [
   {
     label: 'SMS Templates',
-    templates: messageTemplates,
+    templates: [],
   },
 ];
 
@@ -70,21 +49,23 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<
 >;
 
 interface TemplateSwitcherProps extends PopoverTriggerProps {
-  selectedBusinessId: string;
+  selectedTemplateId: number | null;
+  messageTemplates: any[];
+  onClickTemplate: (id: number) => void;
 }
 
 export default function SMSTemplateSwitcher({
-  selectedBusinessId,
+  selectedTemplateId,
   className,
+  messageTemplates,
+  onClickTemplate,
 }: TemplateSwitcherProps) {
   const [open, setOpen] = React.useState(false);
   const [showNewBusinessDialog, setShowNewBusinessDialog] =
     React.useState(false);
 
-  const [selectedBusiness, setSelectedBusiness] = React.useState<Business>(
-    messageTemplates.find(
-      (datum) => datum.value === selectedBusinessId
-    ) as Business
+  const selectedTemplate = messageTemplates.find(
+    (each) => each.id === selectedTemplateId
   );
 
   return (
@@ -98,33 +79,33 @@ export default function SMSTemplateSwitcher({
             variant='outline'
             role='combobox'
             aria-expanded={open}
-            aria-label='Select a business'
+            aria-label='Select a template'
             className={cn('w-[200px] justify-between', className)}
           >
-            {selectedBusiness.label}
+            {selectedTemplate?.title}
             <CaretSortIcon className='ml-auto h-4 w-4 shrink-0 opacity-50' />
           </Button>
         </PopoverTrigger>
         <PopoverContent className='w-[200px] p-0'>
           <Command>
             <CommandList>
-              <CommandInput placeholder='Search business...' />
-              <CommandEmpty>No Business found.</CommandEmpty>
-              <CommandGroup heading='businesses'>
+              <CommandInput placeholder='Search templates...' />
+              <CommandEmpty>No Message found.</CommandEmpty>
+              <CommandGroup heading='templates'>
                 {messageTemplates.map((template) => (
                   <CommandItem
-                    key={template.value}
+                    key={template.id}
                     onSelect={() => {
-                      setSelectedBusiness(template);
+                      onClickTemplate(template.id);
                       setOpen(false);
                     }}
                     className='text-sm'
                   >
-                    {template.label}
+                    {template.title}
                     <CheckIcon
                       className={cn(
                         'ml-auto h-4 w-4',
-                        selectedBusiness.value === template.value
+                        selectedTemplateId === template.id
                           ? 'opacity-100'
                           : 'opacity-0'
                       )}
