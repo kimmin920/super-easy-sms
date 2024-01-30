@@ -80,12 +80,9 @@ function StudentsLayout() {
               }))
             );
         }
-
-        console.log(data, error);
       });
 
     if (error) {
-      console.error('Error updating data:', error);
       return { success: false, error };
     }
 
@@ -94,7 +91,7 @@ function StudentsLayout() {
 
   const handleUpdateData = async (updatedData: Student[]) => {
     const result = await updateData(updatedData);
-    console.log(result);
+
     if (result.success) {
       // const reloadedData = await loader();
     }

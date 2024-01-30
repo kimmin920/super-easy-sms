@@ -136,7 +136,6 @@ export function templateMessageInjector(
       }
 
       if (each.type === 'mention') {
-        console.log(each.id, mentionValueMap);
         const value = each.id ? mentionValueMap[each.id] : 'ERROR-NO-ID';
         return value;
       }

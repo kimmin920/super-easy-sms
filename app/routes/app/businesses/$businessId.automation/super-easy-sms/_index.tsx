@@ -13,16 +13,8 @@ import {
   StudentsDataTableProps,
 } from './_components/StudentsDataTable';
 
-import {
-  TemplateHandler,
-  getDatesBetween,
-  templateMessageInjector,
-} from './utils';
-import {
-  Class,
-  DayInString,
-  allClasses,
-} from '../../$businessId.classes/_mockdata';
+import { getDatesBetween, templateMessageInjector } from './utils';
+import { Class, DayInString } from '../../$businessId.classes/_mockdata';
 import { createClient } from '@supabase/supabase-js';
 import { useLoaderData } from '@remix-run/react';
 
