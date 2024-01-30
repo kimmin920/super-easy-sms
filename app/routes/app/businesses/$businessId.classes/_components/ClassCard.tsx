@@ -1,26 +1,16 @@
 import { cn } from '@/lib/utils';
-// import { Class } from '@/stores/useClass';
-// import {
-//   ContextMenu,
-//   ContextMenuContent,
-//   ContextMenuItem,
-//   ContextMenuSeparator,
-//   ContextMenuSub,
-//   ContextMenuSubContent,
-//   ContextMenuSubTrigger,
-//   ContextMenuTrigger,
-// } from "@/registry/new-york/ui/context-menu"
+import { Class } from '../_mockdata';
 
 interface ClassCardProps extends React.HTMLAttributes<HTMLDivElement> {
   // NOTE: temp
-  album: any;
+  course: Class;
   aspectRatio?: 'portrait' | 'square';
   width?: number;
   height?: number;
 }
 
 export function ClassCard({
-  album,
+  course,
   aspectRatio = 'portrait',
   width,
   height,
@@ -31,8 +21,8 @@ export function ClassCard({
     <div className={cn('space-y-3', className)} {...props}>
       <div className='overflow-hidden rounded-md'>
         <img
-          src={album.coverImg}
-          alt={album.name}
+          src={course.coverImgSrc}
+          alt={course.name}
           width={width}
           height={height}
           className={cn(
@@ -43,17 +33,17 @@ export function ClassCard({
       </div>
 
       <div className='space-y-1 text-sm'>
-        <h3 className='font-medium leading-none'>{album.name}</h3>
-        <p className='text-xs text-muted-foreground'>{album.teacher}</p>
+        <h3 className='font-medium leading-none'>{course.name}</h3>
+        <p className='text-xs text-muted-foreground'>{course.teacher}</p>
 
         <span className='mr-2 text-xl font-bold'>
           {new Intl.NumberFormat('ko-KR', {
             style: 'currency',
             currency: 'KRW',
-          }).format(album.price)}
+          }).format(course.price)}
         </span>
         <span className='text-gray-500 dark:text-gray-400'>
-          {album.priceDescription}
+          /{course.billingFrequency}
         </span>
       </div>
     </div>

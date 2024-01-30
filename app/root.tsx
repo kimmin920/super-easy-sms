@@ -6,18 +6,34 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  json,
+  useLoaderData,
+  useNavigation,
 } from '@remix-run/react';
 
 import styles from '././globals.css';
 
 import { cssBundleHref } from '@remix-run/css-bundle';
+import { NavigationLoadingBar } from './components/NavigationLoadingBar';
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
   { rel: 'stylesheet', href: styles },
 ];
 
+export async function loader() {
+  return json({
+    ENV: {
+      SUPABASE_URL: process.env.SUPABASE_URL,
+      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+    },
+  });
+}
+
 export default function App() {
+  const data = useLoaderData<typeof loader>();
+  const navigation = useNavigation();
+
   return (
     <html lang='en'>
       <head>
@@ -27,10 +43,17 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
+          }}
+        />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+        {navigation.state === 'loading' && <NavigationLoadingBar />}
+
+        <Outlet />
       </body>
     </html>
   );

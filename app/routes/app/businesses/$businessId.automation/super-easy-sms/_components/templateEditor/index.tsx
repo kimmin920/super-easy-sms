@@ -29,8 +29,6 @@ function TemplateEditorTipTap({
     onUpdate: (editor) => onChange(editor.editor.getJSON()),
   });
 
-  console.log(editor?.getJSON());
-
   if (!editor) {
     return null;
   }
