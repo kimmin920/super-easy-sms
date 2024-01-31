@@ -1,5 +1,3 @@
-// import useClass from '@/stores/useClass';
-// import useStudents from '@/stores/useStudents';
 import { selectColumn } from './SelectWidget';
 import {
   DataSheetGrid,
@@ -8,11 +6,10 @@ import {
   textColumn,
 } from 'react-datasheet-grid';
 import 'react-datasheet-grid/dist/style.css';
-import { Class, allClasses } from '../../$businessId.classes/_mockdata';
-import { Student } from '../_mockdata';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Form } from '@remix-run/react';
+import { CourseType, StudentType } from '~/types/collection';
 
 const css = `
   .dsg-cell.classes-row {
@@ -24,14 +21,20 @@ const emailColumn = createTextColumn({
   parseUserInput: (string) => string + '@',
 });
 
+export interface StudentInDatagrid extends StudentType {
+  courses: CourseType[];
+  courseIds: CourseType['id'][];
+}
+
 type Props = {
-  data: Student[];
-  classes: Class[];
-  updateData: (students: Student[]) => void;
+  students: StudentInDatagrid[];
+  courses: CourseType[];
+  updateData: (students: StudentInDatagrid[]) => void;
 };
 
-function DataGrid({ data, classes, updateData }: Props) {
-  const [studentsData, setStudentsData] = useState(data);
+function DataGrid({ students, courses, updateData }: Props) {
+  const [studentsData, setStudentsData] =
+    useState<StudentInDatagrid[]>(students);
 
   const columns = [
     {
@@ -44,19 +47,19 @@ function DataGrid({ data, classes, updateData }: Props) {
     },
     {
       ...keyColumn('email', emailColumn),
-      title: 'email',
+      title: '이메일',
     },
     {
       ...keyColumn(
-        'classIds',
+        'courseIds',
         selectColumn({
-          choices: classes.map((eachClass) => ({
-            value: eachClass.id,
-            label: eachClass.name,
+          choices: courses.map((course) => ({
+            value: course.id,
+            label: course.name,
           })),
         })
       ),
-      title: 'classes',
+      title: '수업',
     },
   ];
 
@@ -70,9 +73,7 @@ function DataGrid({ data, classes, updateData }: Props) {
       <DataSheetGrid
         value={studentsData}
         columns={columns}
-        rowHeight={({ rowData, rowIndex }) => {
-          return 50;
-        }}
+        rowHeight={50}
         onChange={setStudentsData}
       />
 

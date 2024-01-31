@@ -15,6 +15,8 @@ import styles from '././globals.css';
 
 import { cssBundleHref } from '@remix-run/css-bundle';
 import { NavigationLoadingBar } from './components/NavigationLoadingBar';
+import { createClient } from '@supabase/supabase-js';
+import { Database } from './types/supabase';
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
@@ -31,7 +33,8 @@ export async function loader() {
 }
 
 export default function App() {
-  const data = useLoaderData<typeof loader>();
+  const { ENV } = useLoaderData<typeof loader>();
+
   const navigation = useNavigation();
 
   return (
@@ -45,7 +48,7 @@ export default function App() {
       <body>
         <script
           dangerouslySetInnerHTML={{
-            __html: `window.ENV = ${JSON.stringify(data.ENV)}`,
+            __html: `window.ENV = ${JSON.stringify(ENV)}`,
           }}
         />
         <ScrollRestoration />
