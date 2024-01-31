@@ -14,9 +14,11 @@ import {
 } from './_components/StudentsDataTable';
 
 import { getDatesBetween, templateMessageInjector } from './utils';
-import { Class, DayInString } from '../../$businessId.classes/_mockdata';
 import { createClient } from '@supabase/supabase-js';
 import { useLoaderData } from '@remix-run/react';
+import { Database, Json } from '~/types/supabase';
+import { CourseType } from '~/types/collection';
+import { DayInString } from '~/types/day';
 
 interface NonNullableDateRande {
   from: NonNullable<DateRange['from']>;
@@ -24,7 +26,7 @@ interface NonNullableDateRande {
 }
 
 export const loader = async () => {
-  const superbase = createClient(
+  const superbase = createClient<Database>(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!
   );
@@ -52,7 +54,7 @@ export const loader = async () => {
 };
 
 export const action = async ({ request }: { request: Request }) => {
-  const supabase = createClient(
+  const supabase = createClient<Database>(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!
   );
@@ -60,15 +62,16 @@ export const action = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
   const values = Object.fromEntries(formData);
 
-  const { data, error } = await supabase
-    .from('sms_templates')
-    .insert([{ template: values.template, title: values.title }]);
+  const { data, error } = await supabase.from('sms_templates').insert({
+    template: values.template as Json,
+    title: values.title as string,
+  });
 
   return { data, error };
 };
 
 function SuperEasySms() {
-  const { students, classes, templates } = useLoaderData<typeof loader>();
+  const { students, templates } = useLoaderData<typeof loader>();
 
   const [date, setDate] = React.useState<NonNullableDateRande>({
     from: new Date(2022, 0, 20),
@@ -80,6 +83,9 @@ function SuperEasySms() {
   const [selectedTemplateId, setSelectedTemplateId] = React.useState<
     number | null
   >(null);
+  const selectedTemplate = templates.find(
+    (each) => each.id === selectedTemplateId
+  );
 
   const workingDates = getDatesBetween(date, holidays);
 
@@ -87,19 +93,17 @@ function SuperEasySms() {
     setSelectedTemplateId(id);
   }
 
-  const selectedTemplate = templates.find(
-    (each) => each.id === selectedTemplateId
-  );
-
   const mainData: StudentsDataTableProps['data'] = students.map((student) => {
     const classesWithPayment: Array<ClassesWithPayment | null> = student.classes
-      .map((eachClass: Class) => {
+      .map((eachClass: CourseType) => {
         const classDates = workingDates.filter((each) => {
-          const day = each.toLocaleDateString('en-US', {
-            weekday: 'long',
-          }) as DayInString;
+          const day = each
+            .toLocaleDateString('en-US', {
+              weekday: 'long',
+            })
+            .toUpperCase() as DayInString;
 
-          return eachClass.scheduledDays?.includes(day);
+          return eachClass.scheduledDays.includes(day);
         });
 
         const pricePerClass = eachClass.price / eachClass.classCount;
@@ -107,7 +111,7 @@ function SuperEasySms() {
         return {
           ...eachClass,
           activeClassDates: classDates,
-          priceOfCounts: pricePerClass,
+          priceOfCounts: pricePerClass * classDates.length,
         };
       })
       .filter((each) => each !== null);
@@ -121,7 +125,7 @@ function SuperEasySms() {
     }, 0);
 
     const template = selectedTemplate?.template
-      ? JSON.parse(selectedTemplate?.template)
+      ? JSON.parse(selectedTemplate.template)
       : null;
 
     const message = templateMessageInjector(template?.content, {
@@ -143,6 +147,7 @@ function SuperEasySms() {
     };
   });
 
+  console.log(mainData);
   return (
     <>
       <h2 className='text-2xl font-semibold tracking-tight'>Super Easy SMS</h2>

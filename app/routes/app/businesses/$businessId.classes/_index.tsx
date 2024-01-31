@@ -47,12 +47,12 @@ export const action = async ({ request }: { request: Request }) => {
 };
 
 export const loader = async () => {
-  const superbase = createClient(
+  const supabase = createClient(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!
   );
 
-  const { data: classes, error: classesError } = await superbase
+  const { data: classes, error: classesError } = await supabase
     .from('classes')
     .select('*');
 
@@ -95,7 +95,7 @@ function ClassesLayout() {
         <ScrollArea>
           <div className='flex space-x-4 pb-4'>
             {classes.map((eachClass) => (
-              <NavLink key={eachClass.name} to={eachClass.id}>
+              <NavLink key={eachClass.name} to={eachClass.id.toString()}>
                 <ClassCard
                   course={eachClass}
                   className='w-[250px]'

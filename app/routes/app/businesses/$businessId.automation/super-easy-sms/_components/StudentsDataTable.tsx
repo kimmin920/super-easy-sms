@@ -40,9 +40,8 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Student } from '../../../$businessId.students/_mockdata';
-import { Class } from '../../../$businessId.classes/_mockdata';
 import { ClassHoverCard } from './ClassHoverCard';
+import { CourseType, StudentType } from '~/types/collection';
 
 type Status = 'pending' | 'processing' | 'success' | 'failed';
 
@@ -110,12 +109,7 @@ export const columns: ColumnDef<StudentsDataForSMS>[] = [
       const classes: ClassesWithPayment[] = row.getValue('classesWithPayment');
 
       return classes.map((eachClass) => (
-        <ClassHoverCard
-          // className='mr-1'
-          // variant='secondary'
-          key={eachClass.id}
-          classWithPayment={eachClass}
-        />
+        <ClassHoverCard key={eachClass.id} classWithPayment={eachClass} />
       ));
     },
   },
@@ -171,7 +165,9 @@ export const columns: ColumnDef<StudentsDataForSMS>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() =>
+                navigator.clipboard.writeText(payment.id.toString())
+              }
             >
               Copy payment ID
             </DropdownMenuItem>
@@ -185,12 +181,12 @@ export const columns: ColumnDef<StudentsDataForSMS>[] = [
   },
 ];
 
-export interface ClassesWithPayment extends Class {
+export interface ClassesWithPayment extends CourseType {
   activeClassDates: Date[];
   priceOfCounts: number;
 }
 
-interface StudentsDataForSMS extends Student {
+interface StudentsDataForSMS extends StudentType {
   totalPrice: number;
   status: Status;
   classesWithPayment: ClassesWithPayment[];

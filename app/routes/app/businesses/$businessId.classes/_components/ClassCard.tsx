@@ -1,9 +1,8 @@
 import { cn } from '@/lib/utils';
-import { Class } from '../_mockdata';
+import { CourseType } from '~/types/collection';
 
 interface ClassCardProps extends React.HTMLAttributes<HTMLDivElement> {
-  // NOTE: temp
-  course: Class;
+  course: CourseType;
   aspectRatio?: 'portrait' | 'square';
   width?: number;
   height?: number;

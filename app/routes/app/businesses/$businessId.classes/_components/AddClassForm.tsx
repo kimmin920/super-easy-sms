@@ -17,14 +17,12 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Form as RemixForm, useSubmit } from '@remix-run/react';
+import { Form as RemixForm } from '@remix-run/react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-import { SAMPLE_CLASS_IMGS } from '../_mockdata';
-import { createClient } from '@supabase/supabase-js';
-import { redirect } from '@remix-run/node';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { SAMPLE_CLASS_IMGS } from '~/constants/sampleImages';
 
 interface FormDataType {
   id: keyof AppearanceFormValues;
@@ -242,7 +240,18 @@ function AddClassForm({ className }: React.ComponentProps<'form'>) {
   );
 }
 
-function ImgFormField({ field }: { field: ControllerRenderProps }) {
+function ImgFormField({
+  field,
+}: {
+  field: ControllerRenderProps<
+    AppearanceFormValues,
+    keyof AppearanceFormValues
+  >;
+}) {
+  if (typeof field.value !== 'string') {
+    return <div>Error: field.value must be string for img form field</div>;
+  }
+
   return (
     <RadioGroup
       onValueChange={field.onChange}
@@ -282,31 +291,34 @@ function MultipleCheckbox({
   field,
   options,
 }: {
-  field: ControllerRenderProps;
+  field: ControllerRenderProps<
+    AppearanceFormValues,
+    keyof AppearanceFormValues
+  >;
   options: OptionsType[];
 }) {
+  const { value } = field;
+
+  if (!Array.isArray(value)) {
+    return <>Error: value must be array for multiple checkbox</>;
+  }
+
   return (
     <>
-      <input
-        type='text'
-        hidden
-        name={field.name}
-        value={`{${field.value}}`}
-      ></input>
+      <input type='text' hidden name={field.name} value={`{${field.value}}`} />
+
       {options.map((option) => (
         <div key={option.value} className='flex items-center space-x-2'>
           <Checkbox
             id={option.value}
             name={field.name + 'checkbox'}
             value={option.value}
-            checked={field.value?.includes(option.value)}
+            checked={value.includes(option.value)}
             onCheckedChange={(checked) => {
               return checked
-                ? field.onChange([...field.value, option.value])
+                ? field.onChange([...value, option.value])
                 : field.onChange(
-                    field.value?.filter(
-                      (value: string) => value !== option.value
-                    )
+                    value.filter((value: string) => value !== option.value)
                   );
             }}
           />
@@ -321,9 +333,16 @@ function RadioGroupInput({
   field,
   options,
 }: {
-  field: ControllerRenderProps;
+  field: ControllerRenderProps<
+    AppearanceFormValues,
+    keyof AppearanceFormValues
+  >;
   options: OptionsType[];
 }) {
+  if (typeof field.value !== 'string') {
+    return <div>Error: field.value must be string for this Radio</div>;
+  }
+
   return (
     <RadioGroup
       onValueChange={field.onChange}

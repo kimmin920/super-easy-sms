@@ -1,5 +1,7 @@
 import { CalendarIcon } from '@radix-ui/react-icons';
 
+import { ko } from 'date-fns/locale';
+
 import { Button } from '@/components/ui/button';
 import {
   HoverCard,
@@ -15,8 +17,18 @@ interface Props {
 }
 
 export function ClassHoverCard({ classWithPayment }: Props) {
-  const { name, activeClassDates, pricePerClass, coverImg, priceOfCounts } =
-    classWithPayment;
+  const {
+    name,
+    activeClassDates,
+    price,
+    priceDescription,
+    priceOfCounts,
+    coverImgSrc,
+    classCount,
+    created_at,
+  } = classWithPayment;
+
+  const pricePerClass = price / classCount;
 
   return (
     <HoverCard>
@@ -27,7 +39,7 @@ export function ClassHoverCard({ classWithPayment }: Props) {
         <div className='flex justify-between space-x-4'>
           <div
             className={cn('overflow-hidden rounded-md w-[150px] bg-cover')}
-            style={{ backgroundImage: `url(${coverImg})` }}
+            style={{ backgroundImage: `url(${coverImgSrc})` }}
           />
 
           <div className='space-y-1'>
@@ -54,7 +66,7 @@ export function ClassHoverCard({ classWithPayment }: Props) {
             <div className='flex items-center pt-2'>
               <CalendarIcon className='mr-2 h-4 w-4 opacity-70' />{' '}
               <span className='text-xs text-muted-foreground'>
-                Joined December 2021
+                Created at {format(created_at, 'PPP', { locale: ko })}
               </span>
             </div>
           </div>
