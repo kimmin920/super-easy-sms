@@ -35,6 +35,38 @@ export interface Database {
   }
   public: {
     Tables: {
+      businesses: {
+        Row: {
+          created_at: string
+          id: number
+          name: string
+          plan: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          name?: string
+          plan?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          name?: string
+          plan?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "businesses_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       classes: {
         Row: {
           billingFrequency: Database["public"]["Enums"]["billing_frequency"]

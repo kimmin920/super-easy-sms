@@ -1,4 +1,10 @@
-import { NavLink, Outlet, useParams } from '@remix-run/react';
+import {
+  NavLink,
+  Outlet,
+  useActionData,
+  useOutletContext,
+  useParams,
+} from '@remix-run/react';
 
 import BusinessSwitcher from './_components/BusinessSwitcher';
 import { businessesData } from './data';
@@ -6,12 +12,51 @@ import { MainNav } from '~/routes/app/businesses/_components/MainNav';
 import { UserNav } from './_components/UserNav';
 import { Search } from './_components/Search';
 
+import { createServerClient } from '@supabase/auth-helpers-remix';
+import { ActionFunctionArgs, json } from '@remix-run/node';
+
 export interface businessOutletContextType {
   selectedBusinessId: string;
 }
 
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const response = new Response();
+
+  const supabaseClient = createServerClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!,
+    { request, response }
+  );
+
+  const { data, error } = await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent',
+      },
+    },
+  });
+
+  if (error) {
+    console.error(error);
+  }
+
+  return json(
+    { data },
+    {
+      headers: response.headers,
+    }
+  );
+};
+
 function BuisinessRoute() {
+  const data = useActionData();
+  console.log(data);
+
   const params = useParams();
+  const context = useOutletContext();
+  console.log(context);
 
   if (
     !params.businessId ||

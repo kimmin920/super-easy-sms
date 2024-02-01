@@ -42,7 +42,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useNavigate } from '@remix-run/react';
+import { Form, useNavigate, useParams } from '@remix-run/react';
 import { businessesData } from '../data';
 
 const switcherGroup = [
@@ -66,6 +66,8 @@ export default function BusinessSwitcher({
   selectedBusinessId,
   className,
 }: BusinessSwitcherProps) {
+  const params = useParams();
+
   const navigate = useNavigate();
 
   const [open, setOpen] = React.useState(false);
@@ -160,52 +162,60 @@ export default function BusinessSwitcher({
           </Command>
         </PopoverContent>
       </Popover>
+
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Create Business</DialogTitle>
-          <DialogDescription>
-            Add a new business to manage products and customers.
-          </DialogDescription>
-        </DialogHeader>
-        <div>
-          <div className='space-y-4 py-2 pb-4'>
-            <div className='space-y-2'>
-              <Label htmlFor='name'>Business name</Label>
-              <Input id='name' placeholder='Acme Inc.' />
-            </div>
-            <div className='space-y-2'>
-              <Label htmlFor='plan'>Subscription plan</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder='Select a plan' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value='free'>
-                    <span className='font-medium'>Free</span> -{' '}
-                    <span className='text-muted-foreground'>
-                      Trial for two weeks
-                    </span>
-                  </SelectItem>
-                  <SelectItem value='pro'>
-                    <span className='font-medium'>Pro</span> -{' '}
-                    <span className='text-muted-foreground'>
-                      $9/month per user
-                    </span>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
+        <Form method='post' action={`/app/businesses/${params.businessId}`}>
+          <DialogHeader>
+            <DialogTitle>Create Business</DialogTitle>
+            <DialogDescription>
+              Add a new business to manage products and customers.
+            </DialogDescription>
+          </DialogHeader>
+          <div>
+            <div className='space-y-4 py-2 pb-4'>
+              <div className='space-y-2'>
+                <input
+                  hidden
+                  name='user_id'
+                  value={'8f56d325-8a9a-4215-9b16-11d4b3e1ac79'}
+                />
+                <Label htmlFor='name'>Business name</Label>
+                <Input id='name' name='name' placeholder='학원이름..' />
+              </div>
+              <div className='space-y-2'>
+                <Label htmlFor='plan'>Subscription plan</Label>
+                <Select name='plan'>
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select a plan' />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value='free'>
+                      <span className='font-medium'>Free</span> -{' '}
+                      <span className='text-muted-foreground'>
+                        Trial for two weeks
+                      </span>
+                    </SelectItem>
+                    <SelectItem value='pro'>
+                      <span className='font-medium'>Pro</span> -{' '}
+                      <span className='text-muted-foreground'>
+                        $9/month per user
+                      </span>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
-        </div>
-        <DialogFooter>
-          <Button
-            variant='outline'
-            onClick={() => setShowNewBusinessDialog(false)}
-          >
-            Cancel
-          </Button>
-          <Button type='submit'>Continue</Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button
+              variant='outline'
+              onClick={() => setShowNewBusinessDialog(false)}
+            >
+              Cancel
+            </Button>
+            <Button type='submit'>Continue</Button>
+          </DialogFooter>
+        </Form>
       </DialogContent>
     </Dialog>
   );
