@@ -23,7 +23,7 @@ import {
   createServerClient,
 } from '@supabase/auth-helpers-remix';
 import { Database } from './types/supabase';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
@@ -77,6 +77,41 @@ export default function App() {
     };
   }, [supabase, revalidator, user]);
 
+  useEffect(() => {
+    const gscript = document.createElement('script');
+    gscript.id = 'google-one-tab-login';
+    gscript.src = 'https://accounts.google.com/gsi/client';
+    gscript.async = true;
+    document.body.appendChild(gscript);
+
+    gscript.onload = () => {
+      google.accounts.id.initialize({
+        client_id:
+          '168312971610-68uitnnq1dli8is2g4iavaeiptrtqr4g.apps.googleusercontent.com',
+        callback: async (response) => {
+          if (response.credential) {
+            const { error } = await supabase.auth.signInWithIdToken({
+              provider: 'google',
+              token: response.credential,
+            });
+
+            if (error) {
+              console.error(error);
+            }
+          }
+        },
+      });
+
+      // google login prompt 뜨게 하기
+      google.accounts.id.prompt();
+    };
+
+    return () => {
+      const gscript = document.getElementById('google-one-tab-login');
+      gscript?.remove();
+    };
+  }, [supabase]);
+
   return (
     <html lang='en'>
       <head>
@@ -91,6 +126,7 @@ export default function App() {
             __html: `window.ENV = ${JSON.stringify(ENV)}`,
           }}
         />
+
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
