@@ -14,6 +14,7 @@ import { Search } from './_components/Search';
 
 import { createServerClient } from '@supabase/auth-helpers-remix';
 import { ActionFunctionArgs, json } from '@remix-run/node';
+import { ThemeToggle } from '~/components/ThemeToggle';
 
 export interface businessOutletContextType {
   selectedBusinessId: string;
@@ -85,6 +86,7 @@ function BuisinessRoute() {
           <div className='ml-auto flex items-center space-x-4'>
             <Search />
             <UserNav />
+            <ThemeToggle />
           </div>
         </div>
       </div>

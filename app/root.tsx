@@ -13,17 +13,26 @@ import {
 } from '@remix-run/react';
 
 import styles from '././globals.css';
+import '~/registry/themes.css';
 
 import { cssBundleHref } from '@remix-run/css-bundle';
 import { NavigationLoadingBar } from './components/NavigationLoadingBar';
 import GoogleLoginButton from './components/GoogleLoginButton';
-import { getUser } from './services/auth.server';
+
 import {
   createBrowserClient,
   createServerClient,
 } from '@supabase/auth-helpers-remix';
 import { Database } from './types/supabase';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { themeSessionResolver } from './sessions.server';
+import {
+  PreventFlashOnWrongTheme,
+  ThemeProvider,
+  useTheme,
+} from 'remix-themes';
+import clsx from 'clsx';
+import { ThemeWrapper } from './components/ThemeWrapper';
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
@@ -45,8 +54,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
     console.error('get user error', error);
   }
 
+  const { getTheme } = await themeSessionResolver(request);
+
   return json({
     user: data.user,
+    themeData: getTheme(),
     ENV: {
       SUPABASE_URL: process.env.SUPABASE_URL,
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
@@ -54,8 +66,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
   });
 }
 
-export default function App() {
-  const { ENV, user } = useLoaderData<typeof loader>();
+export function App() {
+  const { ENV, user, themeData } = useLoaderData<typeof loader>();
+  const [theme] = useTheme();
+
   const navigation = useNavigation();
   const revalidator = useRevalidator();
 
@@ -113,14 +127,16 @@ export default function App() {
   }, [supabase]);
 
   return (
-    <html lang='en'>
+    <html lang='en' className={clsx(theme)}>
       <head>
         <meta charSet='utf-8' />
         <meta name='viewport' content='width=device-width, initial-scale=1' />
         <Meta />
+        <PreventFlashOnWrongTheme ssrTheme={Boolean(themeData)} />
         <Links />
       </head>
-      <body>
+
+      <ThemeWrapper>
         <script
           dangerouslySetInnerHTML={{
             __html: `window.ENV = ${JSON.stringify(ENV)}`,
@@ -130,11 +146,23 @@ export default function App() {
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+
         {navigation.state === 'loading' && <NavigationLoadingBar />}
         <div>{user ? 'logged in' : 'no login'}</div>
         <GoogleLoginButton supabase={supabase} loggedIn={!!user} />
+
         <Outlet context={{ user, supabase }} />
-      </body>
+      </ThemeWrapper>
     </html>
+  );
+}
+
+export default function AppWithProviders() {
+  const { themeData } = useLoaderData<typeof loader>();
+
+  return (
+    <ThemeProvider specifiedTheme={themeData} themeAction='/action/set-theme'>
+      <App />
+    </ThemeProvider>
   );
 }
