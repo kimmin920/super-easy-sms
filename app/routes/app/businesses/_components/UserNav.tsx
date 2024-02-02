@@ -10,8 +10,27 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useOutletContext } from '@remix-run/react';
 
 export function UserNav() {
+  const context = useOutletContext();
+
+  const logout = async () => {
+    if (!context.supabase) {
+      window.alert('failed, no supabase');
+      return;
+    }
+
+    const { error } = await context.supabase.auth.signOut();
+
+    if (error) {
+      console.log(error);
+      return error;
+    }
+
+    return error;
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -48,7 +67,7 @@ export function UserNav() {
           <DropdownMenuItem>New Team</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={logout}>
           Log out
           <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
         </DropdownMenuItem>

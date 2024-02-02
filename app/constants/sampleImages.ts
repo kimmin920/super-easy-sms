@@ -20,3 +20,20 @@ export const SAMPLE_CLASS_IMGS = [
     name: 'violine-B',
   },
 ];
+
+export const OCEAN_BACK_IMGS = [
+  'https://d2zmi9say0r1yj.cloudfront.net/OceanImageBank_RichardBarnden_05.jpg',
+  'https://d2zmi9say0r1yj.cloudfront.net/OceanImageBank_FrancoisBaelen_15.jpg',
+  'https://d2zmi9say0r1yj.cloudfront.net/OceanImageBank_JakeWilton_03.jpg',
+  'https://d2zmi9say0r1yj.cloudfront.net/OceanImageBank_GregoryPiper_38.jpg',
+  'https://d2zmi9say0r1yj.cloudfront.net/OceanImageBank_SimonHilbourne_01.jpg',
+  'https://d2zmi9say0r1yj.cloudfront.net/OceanImageBank_ThomasHorig_13.jpg',
+  'https://d2zmi9say0r1yj.cloudfront.net/OceanImageBank_ThomasHorig_27.jpg',
+  'https://d2zmi9say0r1yj.cloudfront.net/OceanImageBank_JeffHester_05.jpg',
+  'https://d2zmi9say0r1yj.cloudfront.net/OceanImageBank_LewisBurnett_05.jpg',
+];
+
+export const getRandomOceanImage = () => {
+  const randomIndex = Math.floor(Math.random() * OCEAN_BACK_IMGS.length);
+  return OCEAN_BACK_IMGS[randomIndex];
+};

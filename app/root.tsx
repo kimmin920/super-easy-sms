@@ -17,7 +17,6 @@ import '~/registry/themes.css';
 
 import { cssBundleHref } from '@remix-run/css-bundle';
 import { NavigationLoadingBar } from './components/NavigationLoadingBar';
-import GoogleLoginButton from './components/GoogleLoginButton';
 
 import {
   createBrowserClient,
@@ -148,8 +147,6 @@ export function App() {
         <LiveReload />
 
         {navigation.state === 'loading' && <NavigationLoadingBar />}
-        <div>{user ? 'logged in' : 'no login'}</div>
-        <GoogleLoginButton supabase={supabase} loggedIn={!!user} />
 
         <Outlet context={{ user, supabase }} />
       </ThemeWrapper>

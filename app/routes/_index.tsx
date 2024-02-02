@@ -1,5 +1,5 @@
 import type { MetaFunction } from '@remix-run/node';
-import { NavLink } from '@remix-run/react';
+import { NavLink, useOutletContext } from '@remix-run/react';
 
 export const meta: MetaFunction = () => {
   return [
@@ -9,6 +9,8 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
+  const context = useOutletContext();
+
   return (
     <div style={{ border: '1px solid red' }}>
       <div>this is _index.tsx in routes.</div>

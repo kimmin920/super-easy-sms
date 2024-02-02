@@ -7,10 +7,14 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Icons } from '~/components/Icons';
+import { useOutletContext } from '@remix-run/react';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+  const context = useOutletContext();
+  const { supabase } = context;
+
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   async function onSubmit(event: React.SyntheticEvent) {
@@ -20,6 +24,22 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     setTimeout(() => {
       setIsLoading(false);
     }, 3000);
+  }
+
+  async function login() {
+    setIsLoading(true);
+
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
+
+    console.log(data);
   }
 
   return (
@@ -58,7 +78,12 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           </span>
         </div>
       </div>
-      <Button variant='outline' type='button' disabled={isLoading}>
+      <Button
+        variant='outline'
+        type='button'
+        disabled={isLoading}
+        onClick={login}
+      >
         {isLoading ? (
           <Icons.spinner className='mr-2 h-4 w-4 animate-spin' />
         ) : (

@@ -18,3 +18,5 @@ export interface StudentClassMapType {
 export interface StudentWithCourse extends StudentType {
   courses: CourseType;
 }
+
+export type BusinessType = Database['public']['Tables']['businesses']['Row'];
