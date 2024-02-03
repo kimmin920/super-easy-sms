@@ -1,9 +1,15 @@
-import { useLoaderData } from '@remix-run/react';
-import DataGrid, { StudentInDatagrid } from './_components/DataGrid';
+import { Outlet, useLoaderData } from '@remix-run/react';
+import { StudentInDatagrid } from './_components/DataGrid';
 
-import { StudentClassMapType } from '~/types/collection';
+import { StudentClassMapType, StudentWithCourse } from '~/types/collection';
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '~/types/supabase';
+import StudentsDataTable from './_components/StudentsDataTable';
+import { Button } from '@/components/ui/button';
+import AddButton from '~/components/AddButton';
+import { AddStudentSheet } from './_components/AddStudentSheet';
+import { ActionFunctionArgs } from '@remix-run/node';
+import { createServerClient } from '@supabase/auth-helpers-remix';
 
 export const loader = async () => {
   const supabase = createClient<Database>(
@@ -19,7 +25,7 @@ export const loader = async () => {
     .from('classes')
     .select('*');
 
-  const formattedStudents: StudentInDatagrid[] =
+  const formattedStudents: StudentWithCourse[] =
     students?.map((student) => ({
       ...student,
       courseIds: student.courseIds.map((each) => each.id),
@@ -33,30 +39,54 @@ export const loader = async () => {
   };
 };
 
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const response = new Response();
+
+  const supabaseClient = createServerClient<Database>(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!,
+    { request, response }
+  );
+
+  const body = await request.formData();
+  const { _action, ...values } = Object.fromEntries(body);
+
+  if (_action === 'delete') {
+    const { data, error } = await supabaseClient
+      .from('students')
+      .delete()
+      .eq('id', values.id);
+
+    console.log(error);
+  }
+
+  return null;
+};
+
 function StudentsLayout() {
   const { students, classes } = useLoaderData<typeof loader>();
 
-  const handleUpdateData = async (updatedData: StudentInDatagrid[]) => {
-    const result = await updateData(updatedData);
-
-    if (result.success) {
-      // NOTE: must change this window alert to modal or toast
-      window.alert('SUCCESS!');
-      return;
-    }
-
-    if (result.error) {
-      window.alert('ERROR!');
-      return;
-    }
-  };
-
   return (
-    <DataGrid
-      students={students}
-      courses={classes}
-      updateData={handleUpdateData}
-    />
+    <>
+      <div className='flex items-center justify-between space-y-2'>
+        <div>
+          <h2 className='text-2xl font-bold tracking-tight'>Students</h2>
+          <p className='text-muted-foreground'>
+            Here&apos;s a list of your students!
+          </p>
+        </div>
+        <div className='flex items-center space-x-2'>
+          <AddStudentSheet courses={classes} />
+        </div>
+      </div>
+      <StudentsDataTable data={students} />
+      <Outlet />
+    </>
+    // <DataGrid
+    //   students={students}
+    //   courses={classes}
+    //   updateData={handleUpdateData}
+    // />
   );
 }
 
