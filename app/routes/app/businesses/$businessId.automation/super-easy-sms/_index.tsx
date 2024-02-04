@@ -19,13 +19,20 @@ import { useLoaderData } from '@remix-run/react';
 import { Database, Json } from '~/types/supabase';
 import { CourseType } from '~/types/collection';
 import { DayInString } from '~/types/day';
+import { LoaderFunctionArgs, redirect } from '@remix-run/node';
 
 interface NonNullableDateRande {
   from: NonNullable<DateRange['from']>;
   to: NonNullable<DateRange['to']>;
 }
 
-export const loader = async () => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+  const businessId = params.businessId;
+
+  if (!businessId) {
+    return redirect('/403');
+  }
+
   const superbase = createClient<Database>(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!
@@ -33,15 +40,18 @@ export const loader = async () => {
 
   const { data: students, error: studentsError } = await superbase
     .from('students')
-    .select(`*, classes: classes(*), classIds: classes(id)`);
+    .select(`*, classes: classes(*), classIds: classes(id)`)
+    .eq('business_id', businessId);
 
   const { data: classes, error: classesError } = await superbase
     .from('classes')
-    .select('*');
+    .select('*')
+    .eq('business_id', businessId);
 
   const { data: templates, error: templatesError } = await superbase
     .from('sms_templates')
-    .select('*');
+    .select('*')
+    .eq('business_id', businessId);
 
   return {
     students: students ?? [],

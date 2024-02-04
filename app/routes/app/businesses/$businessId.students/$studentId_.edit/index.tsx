@@ -10,8 +10,9 @@ import { EditStudentSheet } from '../_components/EditStudentSheet';
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const studentId = params.studentId;
+  const businessId = params.businessId;
 
-  if (!studentId) {
+  if (!studentId || !businessId) {
     // TODO: error handling
     return redirect('/');
   }
@@ -25,12 +26,14 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     .from('students')
     .select(`*, courses: classes(*), courseIds: classes(id)`)
     .eq('id', studentId)
+    .eq('business_id', businessId)
     .limit(1)
     .single();
 
   const { data: courses, error: CoursesError } = await supabase
     .from('classes')
-    .select(`*`);
+    .select(`*`)
+    .eq('business_id', businessId);
 
   return {
     courses: courses,
@@ -89,7 +92,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
 function EditStudent() {
   const { student, courses } = useLoaderData<typeof loader>();
-
+  console.log({ student, courses });
   return (
     <div>
       <EditStudentSheet

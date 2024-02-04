@@ -70,6 +70,7 @@ export interface Database {
       classes: {
         Row: {
           billingFrequency: Database["public"]["Enums"]["billing_frequency"]
+          business_id: number
           classCount: number
           coverImgSrc: string
           created_at: string
@@ -83,6 +84,7 @@ export interface Database {
         }
         Insert: {
           billingFrequency?: Database["public"]["Enums"]["billing_frequency"]
+          business_id: number
           classCount?: number
           coverImgSrc?: string
           created_at?: string
@@ -96,6 +98,7 @@ export interface Database {
         }
         Update: {
           billingFrequency?: Database["public"]["Enums"]["billing_frequency"]
+          business_id?: number
           classCount?: number
           coverImgSrc?: string
           created_at?: string
@@ -107,31 +110,51 @@ export interface Database {
           scheduledDays?: string[]
           teacher?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "classes_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       sms_templates: {
         Row: {
+          business_id: number | null
           created_at: string
           id: number
           template: Json | null
           title: string | null
         }
         Insert: {
+          business_id?: number | null
           created_at?: string
           id?: number
           template?: Json | null
           title?: string | null
         }
         Update: {
+          business_id?: number | null
           created_at?: string
           id?: number
           template?: Json | null
           title?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "sms_templates_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       students: {
         Row: {
+          business_id: number | null
           created_at: string
           email: string | null
           id: number
@@ -139,6 +162,7 @@ export interface Database {
           phoneNumber: string | null
         }
         Insert: {
+          business_id?: number | null
           created_at?: string
           email?: string | null
           id?: number
@@ -146,13 +170,22 @@ export interface Database {
           phoneNumber?: string | null
         }
         Update: {
+          business_id?: number | null
           created_at?: string
           email?: string | null
           id?: number
           name?: string | null
           phoneNumber?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "students_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       students_classes_map: {
         Row: {

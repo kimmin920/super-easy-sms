@@ -155,7 +155,7 @@ const appearanceFormSchema = z.object({
   classCount: z.number(),
 });
 
-const defaultValues: Partial<AppearanceFormValues> = {
+const DEFAULT_VALUES: Partial<AppearanceFormValues> = {
   coverImgSrc: SAMPLE_CLASS_IMGS[0].imgSrc,
   name: '',
   description: '',
@@ -169,12 +169,22 @@ const defaultValues: Partial<AppearanceFormValues> = {
 
 type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
 
-function AddClassForm({ className }: React.ComponentProps<'form'>) {
+interface AddClassFormProps extends React.ComponentProps<'form'> {
+  actionType: 'create' | 'update';
+  defaultValues?: Partial<AppearanceFormValues>;
+  courseId?: number;
+}
+function AddClassForm({
+  className,
+  defaultValues,
+  courseId,
+  actionType,
+}: AddClassFormProps) {
   // const submit = useSubmit();
 
   const form = useForm<AppearanceFormValues>({
     resolver: zodResolver(appearanceFormSchema),
-    defaultValues,
+    defaultValues: defaultValues ?? DEFAULT_VALUES,
   });
 
   // function onSubmit(formValues: AppearanceFormValues) {
@@ -190,11 +200,12 @@ function AddClassForm({ className }: React.ComponentProps<'form'>) {
   return (
     <Form {...form}>
       <RemixForm
-        action=''
+        action='/app/businesses/6/classes'
         method='post'
         className={cn('grid items-start gap-4', className)}
         // onSubmit={form.handleSubmit(onSubmit)}
       >
+        <input hidden name='id' value={courseId} />
         {CLASS_FORM_DATA.map((each) => {
           return (
             <FormField
@@ -234,7 +245,9 @@ function AddClassForm({ className }: React.ComponentProps<'form'>) {
             />
           );
         })}
-        <Button type='submit'>Save changes</Button>
+        <Button type='submit' name='_action' value={actionType}>
+          Save
+        </Button>
       </RemixForm>
     </Form>
   );

@@ -50,6 +50,10 @@ function CoursesCombobox({
                     (each) => each.id === checkedId
                   ) as CourseType;
 
+                  if (!course) {
+                    return 'N/A';
+                  }
+
                   return course.name;
                 })
                 .join(', ')}

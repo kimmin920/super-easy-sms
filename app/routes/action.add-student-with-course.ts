@@ -2,8 +2,11 @@ import { ActionFunctionArgs, redirect } from '@remix-run/node';
 import { createServerClient } from '@supabase/auth-helpers-remix';
 import { Database } from '~/types/supabase';
 
-export async function action({ request, params }: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
   const response = new Response();
+
+  const { searchParams } = new URL(request.url);
+  const businessId = searchParams.get('businessId');
 
   const supabaseClient = createServerClient<Database>(
     process.env.SUPABASE_URL!,
@@ -28,6 +31,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
       name: values.name,
       email: values.email,
       phoneNumber: values.phoneNumber,
+      business_id: businessId,
     })
     .select()
     .limit(1)
@@ -43,9 +47,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }));
 
   await supabaseClient.from('students_classes_map').insert(relationship);
-
-  const { searchParams } = new URL(request.url);
-  const businessId = searchParams.get('businessId');
 
   return redirect(`/app/businesses/${businessId}/students`);
 }

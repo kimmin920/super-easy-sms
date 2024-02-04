@@ -141,7 +141,7 @@ export const columns: ColumnDef<StudentsDataForSMS>[] = [
             )}`}
           >
             <Button>
-              <EnvelopeOpenIcon className='mr-2 h-4 w-4' /> Send SMS
+              <EnvelopeOpenIcon className='mr-2 h-4 w-4' /> SMS
             </Button>
           </a>
         </div>

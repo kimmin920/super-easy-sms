@@ -11,8 +11,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useOutletContext } from '@remix-run/react';
+import { SupabaseUserType } from '~/types/collection';
 
-export function UserNav() {
+type UserNavProps = {
+  user: SupabaseUserType;
+};
+
+export function UserNav({ user }: UserNavProps) {
   const context = useOutletContext();
 
   const logout = async () => {
@@ -36,17 +41,21 @@ export function UserNav() {
       <DropdownMenuTrigger asChild>
         <Button variant='ghost' className='relative h-8 w-8 rounded-full'>
           <Avatar className='h-8 w-8'>
-            <AvatarImage src='' alt='@user-name' />
-            <AvatarFallback>SC</AvatarFallback>
+            <AvatarImage src={user.user_metadata.avatar_url} alt='@user-name' />
+            <AvatarFallback>
+              {user.user_metadata.name.slice(0, 2)}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className='w-56' align='end' forceMount>
         <DropdownMenuLabel className='font-normal'>
           <div className='flex flex-col space-y-1'>
-            <p className='text-sm font-medium leading-none'>user-name</p>
+            <p className='text-sm font-medium leading-none'>
+              {user.user_metadata.name}
+            </p>
             <p className='text-xs leading-none text-muted-foreground'>
-              m@example.com
+              {user.user_metadata.email}
             </p>
           </div>
         </DropdownMenuLabel>

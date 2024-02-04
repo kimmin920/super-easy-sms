@@ -5,13 +5,21 @@ import { StudentClassMapType, StudentWithCourse } from '~/types/collection';
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '~/types/supabase';
 import StudentsDataTable from './_components/StudentsDataTable';
-import { Button } from '@/components/ui/button';
-import AddButton from '~/components/AddButton';
 import { AddStudentSheet } from './_components/AddStudentSheet';
-import { ActionFunctionArgs } from '@remix-run/node';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  redirect,
+} from '@remix-run/node';
 import { createServerClient } from '@supabase/auth-helpers-remix';
 
-export const loader = async () => {
+export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+  const businessId = params.businessId;
+
+  if (!businessId) {
+    return redirect('/404');
+  }
+
   const supabase = createClient<Database>(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!
@@ -19,11 +27,13 @@ export const loader = async () => {
 
   const { data: students, error: studentsError } = await supabase
     .from('students')
-    .select(`*, courses: classes(*), courseIds: classes(id)`);
+    .select(`*, courses: classes(*), courseIds: classes(id)`)
+    .eq('business_id', businessId);
 
   const { data: classes, error: classesError } = await supabase
     .from('classes')
-    .select('*');
+    .select('*')
+    .eq('business_id', businessId);
 
   const formattedStudents: StudentWithCourse[] =
     students?.map((student) => ({
@@ -56,8 +66,6 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       .from('students')
       .delete()
       .eq('id', values.id);
-
-    console.log(error);
   }
 
   return null;

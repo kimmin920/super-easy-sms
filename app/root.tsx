@@ -49,8 +49,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const { data, error } = await supabaseClient.auth.getUser();
 
-  if (error) {
+  if (!data) {
     console.error('get user error', error);
+    return;
   }
 
   const { getTheme } = await themeSessionResolver(request);
@@ -61,6 +62,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     ENV: {
       SUPABASE_URL: process.env.SUPABASE_URL,
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+      GOOGLE_CLIENT_KEY: process.env.GOOGLE_CLIENT_KEY,
     },
   });
 }
@@ -99,8 +101,7 @@ export function App() {
 
     gscript.onload = () => {
       google.accounts.id.initialize({
-        client_id:
-          '168312971610-68uitnnq1dli8is2g4iavaeiptrtqr4g.apps.googleusercontent.com',
+        client_id: ENV.GOOGLE_CLIENT_KEY,
         callback: async (response) => {
           if (response.credential) {
             const { error } = await supabase.auth.signInWithIdToken({

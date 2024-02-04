@@ -1,4 +1,5 @@
 import { Database } from './supabase';
+import type { User } from '@supabase/gotrue-js/src/lib/types';
 
 export type CourseType = Database['public']['Tables']['classes']['Row'];
 
@@ -21,3 +22,18 @@ export interface StudentWithCourse extends StudentType {
 }
 
 export type BusinessType = Database['public']['Tables']['businesses']['Row'];
+
+export interface SupabaseUserType extends User {
+  user_metadata: {
+    avatar_url: string;
+    email: string;
+    email_verified: boolean;
+    full_name: string;
+    iss: string;
+    name: string;
+    phone_verified: boolean;
+    picture: string;
+    provider_id: string;
+    sub: string;
+  };
+}

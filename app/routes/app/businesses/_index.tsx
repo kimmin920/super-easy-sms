@@ -20,6 +20,7 @@ import { ThemeToggle } from '~/components/ThemeToggle';
 import { Database } from '~/types/supabase';
 import CreateBusinessForm from './_components/CreateBusinessInputs';
 import { Button } from '@/components/ui/button';
+import { SupabaseUserType } from '~/types/collection';
 
 export interface businessOutletContextType {
   selectedBusinessId: string;
@@ -69,12 +70,14 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     .from('businesses')
     .select('*');
 
-  return { businesses: businesses ?? [], error };
+  const { data: userData } = await supabaseClient.auth.getUser();
+
+  return { businesses: businesses ?? [], user: userData.user, error };
 };
 
 function BuisinessRoute() {
   const data = useActionData();
-  const { businesses, error } = useLoaderData<typeof loader>();
+  const { businesses, user, error } = useLoaderData<typeof loader>();
   console.log('businesses', businesses);
   console.log(error);
 
@@ -119,7 +122,7 @@ function BuisinessRoute() {
           <MainNav className='mx-6' />
           <div className='ml-auto flex items-center space-x-4'>
             <Search />
-            <UserNav />
+            <UserNav user={user as SupabaseUserType} />
             <ThemeToggle />
           </div>
         </div>
