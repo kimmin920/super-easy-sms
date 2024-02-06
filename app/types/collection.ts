@@ -37,3 +37,5 @@ export interface SupabaseUserType extends User {
     sub: string;
   };
 }
+
+export type BusinessFormType = Pick<BusinessType, 'name' | 'plan'>;

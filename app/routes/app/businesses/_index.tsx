@@ -1,11 +1,13 @@
 import {
   Form,
+  Link,
   NavLink,
   Outlet,
   useActionData,
   useLoaderData,
   useOutletContext,
   useParams,
+  useRevalidator,
 } from '@remix-run/react';
 
 import BusinessSwitcher from './_components/BusinessSwitcher';
@@ -21,6 +23,9 @@ import { Database } from '~/types/supabase';
 import CreateBusinessForm from './_components/CreateBusinessInputs';
 import { Button } from '@/components/ui/button';
 import { SupabaseUserType } from '~/types/collection';
+import { useEffect } from 'react';
+import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { HamburgerMenuIcon, SunIcon } from '@radix-ui/react-icons';
 
 export interface businessOutletContextType {
   selectedBusinessId: string;
@@ -76,13 +81,9 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 function BuisinessRoute() {
-  const data = useActionData();
   const { businesses, user, error } = useLoaderData<typeof loader>();
-  console.log('businesses', businesses);
-  console.log(error);
 
   const params = useParams();
-  const context = useOutletContext();
 
   if (
     !params.businessId ||
@@ -114,21 +115,62 @@ function BuisinessRoute() {
   return (
     <>
       <div className='backdrop-blur sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
-        <div className='flex h-16 items-center px-4'>
+        <div className='h-16 items-center px-4 hidden md:flex max-w-screen-2xl container'>
           <BusinessSwitcher
             selectedBusinessId={params.businessId}
             businesses={businesses}
           />
           <MainNav className='mx-6' />
           <div className='ml-auto flex items-center space-x-4'>
-            <Search />
             <UserNav user={user as SupabaseUserType} />
             <ThemeToggle />
           </div>
         </div>
       </div>
+      {/* NOTE mobile view */}
 
-      <div className='flex-1 space-y-4 p-8 pt-6'>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button className='md:hidden rounded-none' size='icon'>
+            <HamburgerMenuIcon className='h-6 w-6' />
+            <span className='sr-only'>Toggle navigation menu</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent side='left'>
+          <Link className='mr-6 hidden md:flex' to='#'>
+            <SunIcon className='h-6 w-6' />
+            <span className='sr-only'>Acme Inc</span>
+          </Link>
+          <div className='grid gap-2 py-6'>
+            <Link
+              className='flex w-full items-center py-2 text-lg font-semibold'
+              to='#'
+            >
+              Home
+            </Link>
+            <Link
+              className='flex w-full items-center py-2 text-lg font-semibold'
+              to='#'
+            >
+              About
+            </Link>
+            <Link
+              className='flex w-full items-center py-2 text-lg font-semibold'
+              to='#'
+            >
+              Services
+            </Link>
+            <Link
+              className='flex w-full items-center py-2 text-lg font-semibold'
+              to='#'
+            >
+              Contact
+            </Link>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <div className='flex-1 space-y-4 p-8 pt-6 container'>
         <Outlet
           context={{
             selectedBusinessId: params.businessId,

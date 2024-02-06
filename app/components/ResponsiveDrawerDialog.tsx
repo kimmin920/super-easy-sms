@@ -26,6 +26,7 @@ interface ResponsiveDrawerDialogProps {
   form: React.ReactNode;
   title: string;
   description: string;
+  closeText?: string;
 }
 
 export function ResponsiveDrawerDialog({
@@ -33,6 +34,7 @@ export function ResponsiveDrawerDialog({
   form,
   title,
   description,
+  closeText,
 }: ResponsiveDrawerDialogProps) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery('(min-width: 768px)');
@@ -64,7 +66,7 @@ export function ResponsiveDrawerDialog({
         <div className='px-4 max-h-96 overflow-y-auto'>{form}</div>
         <DrawerFooter className='pt-2'>
           <DrawerClose asChild>
-            <Button variant='outline'>Cancel</Button>
+            <Button variant='outline'>{closeText ?? 'Cancel'}</Button>
           </DrawerClose>
         </DrawerFooter>
       </DrawerContent>

@@ -1,15 +1,28 @@
+import { LoaderFunctionArgs } from '@remix-run/node';
 import { createServerClient } from '@supabase/auth-helpers-remix';
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '~/types/supabase';
 
-export async function getUser({}) {
+export async function getUser({
+  request,
+}: {
+  request: LoaderFunctionArgs['request'];
+}) {
+  const response = new Response();
+
   const supabaseClient = createServerClient(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!,
     { request, response }
   );
 
-  return await supabaseClient.auth.getUser();
+  const { data } = await supabaseClient.auth.getUser();
+
+  if (data.user) {
+    return { user: data.user };
+  }
+
+  throw Error;
 }
 
 export async function googleLogIn() {

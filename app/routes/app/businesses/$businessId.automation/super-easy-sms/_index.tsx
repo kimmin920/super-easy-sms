@@ -20,6 +20,8 @@ import { Database, Json } from '~/types/supabase';
 import { CourseType } from '~/types/collection';
 import { DayInString } from '~/types/day';
 import { LoaderFunctionArgs, redirect } from '@remix-run/node';
+import { ResponsiveDrawerDialog } from '~/components/ResponsiveDrawerDialog';
+import { Button } from '@/components/ui/button';
 
 interface NonNullableDateRande {
   from: NonNullable<DateRange['from']>;
@@ -157,7 +159,6 @@ function SuperEasySms() {
     };
   });
 
-  console.log(mainData);
   return (
     <>
       <h2 className='text-2xl font-semibold tracking-tight'>Super Easy SMS</h2>
@@ -166,36 +167,45 @@ function SuperEasySms() {
         <StudentsDataTable data={mainData} />
       </div>
 
-      <h2 className='text-2xl font-semibold tracking-tight'>Settings</h2>
-      <div>
-        <div>
-          정산기간:
-          <DatePickerWithRange date={date} setDate={setDate} />
-        </div>
+      <ResponsiveDrawerDialog
+        title='Settings'
+        description={'설정 즉시 반영됩니다.'}
+        closeText='confirm'
+        form={
+          <>
+            <div>
+              정산기간:
+              <DatePickerWithRange date={date} setDate={setDate} />
+            </div>
 
-        <div>
-          공휴일:
-          <HolidayCalendar
-            holidayDates={holidays}
-            setHolidayDates={setHolidays}
-            fromDate={date.from}
-            toDate={date.to}
-          />
-        </div>
+            <div>
+              공휴일:
+              <HolidayCalendar
+                holidayDates={holidays}
+                setHolidayDates={setHolidays}
+                fromDate={date.from}
+                toDate={date.to}
+              />
+            </div>
 
-        <div>
-          템플릿:
-          <SMSTemplateSwitcher
-            selectedTemplateId={selectedTemplateId}
-            messageTemplates={templates}
-            onClickTemplate={onClickTemplate}
-          />
-          <div>
-            미리보기:
-            <TemplateParser template={selectedTemplate?.template ?? ''} />
-          </div>
-        </div>
-      </div>
+            <div>
+              템플릿:
+              <SMSTemplateSwitcher
+                selectedTemplateId={selectedTemplateId}
+                messageTemplates={templates}
+                onClickTemplate={onClickTemplate}
+              />
+              <div>
+                미리보기:
+                <TemplateParser template={selectedTemplate?.template ?? ''} />
+              </div>
+            </div>
+          </>
+        }
+        button={<Button>Settings</Button>}
+      />
+      {/* <h2 className='text-2xl font-semibold tracking-tight'>Settings</h2> */}
+      <div></div>
     </>
   );
 }

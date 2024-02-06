@@ -118,6 +118,7 @@ export default function BusinessSwitcher({
                       setOpen(false);
                       navigate(`${business.id}`);
                     }}
+                    value={business.id.toString()}
                     className='text-sm'
                   >
                     <Avatar className='mr-2 h-5 w-5'>
