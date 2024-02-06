@@ -67,7 +67,8 @@ function Link({
       to={href}
       className={({ isActive }) =>
         cn(
-          'text-sm font-medium transition-colors hover:text-primary',
+          'md:text-sm md:font-medium transition-colors hover:text-primary',
+          'text-lg font-semibold',
           !isActive && 'text-muted-foreground'
         )
       }

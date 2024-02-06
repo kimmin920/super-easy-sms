@@ -126,49 +126,36 @@ function BuisinessRoute() {
             <ThemeToggle />
           </div>
         </div>
-      </div>
-      {/* NOTE mobile view */}
 
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button className='md:hidden rounded-none' size='icon'>
-            <HamburgerMenuIcon className='h-6 w-6' />
-            <span className='sr-only'>Toggle navigation menu</span>
-          </Button>
-        </SheetTrigger>
-        <SheetContent side='left'>
-          <Link className='mr-6 hidden md:flex' to='#'>
-            <SunIcon className='h-6 w-6' />
-            <span className='sr-only'>Acme Inc</span>
-          </Link>
-          <div className='grid gap-2 py-6'>
-            <Link
-              className='flex w-full items-center py-2 text-lg font-semibold'
-              to='#'
-            >
-              Home
+        {/* NOTE mobile view */}
+        <Sheet>
+          <SheetTrigger asChild>
+            <div className='max-w-8xl mx-auto md:hidden'>
+              <div className='py-1 mx-3'>
+                <div className='relative flex items-center'>
+                  <Button
+                    variant='ghost'
+                    className='rounded-none background-muted'
+                    size='icon'
+                  >
+                    <HamburgerMenuIcon className='h-6 w-6 fill-black' />
+                    <span className='sr-only'>Toggle navigation menu</span>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </SheetTrigger>
+          <SheetContent side='left'>
+            <Link className='mr-6 hidden md:flex' to='#'>
+              <SunIcon className='h-6 w-6' />
+              <span className='sr-only'>Acme Inc</span>
             </Link>
-            <Link
-              className='flex w-full items-center py-2 text-lg font-semibold'
-              to='#'
-            >
-              About
-            </Link>
-            <Link
-              className='flex w-full items-center py-2 text-lg font-semibold'
-              to='#'
-            >
-              Services
-            </Link>
-            <Link
-              className='flex w-full items-center py-2 text-lg font-semibold'
-              to='#'
-            >
-              Contact
-            </Link>
-          </div>
-        </SheetContent>
-      </Sheet>
+            <div className='py-6'>
+              <MainNav className='flex-col items-start space-y-4' />
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
 
       <div className='flex-1 space-y-4 p-8 pt-6 container'>
         <Outlet
