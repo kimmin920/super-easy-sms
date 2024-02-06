@@ -17,7 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Form as RemixForm } from '@remix-run/react';
+import { Form as RemixForm, useParams } from '@remix-run/react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
@@ -180,7 +180,8 @@ function AddClassForm({
   courseId,
   actionType,
 }: AddClassFormProps) {
-  // const submit = useSubmit();
+  const params = useParams();
+  const businessId = params.businessId;
 
   const form = useForm<AppearanceFormValues>({
     resolver: zodResolver(appearanceFormSchema),
@@ -200,10 +201,9 @@ function AddClassForm({
   return (
     <Form {...form}>
       <RemixForm
-        action='/app/businesses/6/classes'
+        action={`/app/businesses/${businessId}/classes`}
         method='post'
         className={cn('grid items-start gap-4', className)}
-        // onSubmit={form.handleSubmit(onSubmit)}
       >
         <input hidden name='id' value={courseId} />
         {CLASS_FORM_DATA.map((each) => {
