@@ -24,7 +24,11 @@ const NAVS = [
   },
   {
     name: 'Automation',
-    href: '/automation',
+    href: '/automation/home',
+  },
+  {
+    name: 'AI Assistant',
+    href: '/ai-assistant',
   },
   {
     name: 'Settings',

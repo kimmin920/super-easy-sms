@@ -43,7 +43,7 @@ export function ResponsiveDrawerDialog({
     return (
       <Dialog open={open} onOpenChange={setOpen} modal>
         <DialogTrigger asChild>{button}</DialogTrigger>
-        <DialogContent className='sm:max-w-[425px] max-h-full overflow-y-auto'>
+        <DialogContent className='w-fit max-w-fit overflow-y-auto'>
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>

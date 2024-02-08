@@ -26,7 +26,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
-import { columns } from '../../$businessId.automation/super-easy-sms/_components/StudentsDataTable';
+import { columns } from '../../$businessId.automation.super-easy-sms/_components/StudentsDataTable';
 import { useState } from 'react';
 import { StudentWithCourse } from '~/types/collection';
 import { StudentsDataTableColumns } from './StudentsDataTableColumns';

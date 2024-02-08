@@ -19,7 +19,11 @@ import { useLoaderData } from '@remix-run/react';
 import { Database, Json } from '~/types/supabase';
 import { CourseType } from '~/types/collection';
 import { DayInString } from '~/types/day';
-import { LoaderFunctionArgs, redirect } from '@remix-run/node';
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  redirect,
+} from '@remix-run/node';
 import { ResponsiveDrawerDialog } from '~/components/ResponsiveDrawerDialog';
 import { Button } from '@/components/ui/button';
 
@@ -65,7 +69,9 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   };
 };
 
-export const action = async ({ request }: { request: Request }) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
+  const businessId = params.businessId;
+
   const supabase = createClient<Database>(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!
@@ -74,10 +80,20 @@ export const action = async ({ request }: { request: Request }) => {
   const formData = await request.formData();
   const values = Object.fromEntries(formData);
 
-  const { data, error } = await supabase.from('sms_templates').insert({
-    template: values.template as Json,
-    title: values.title as string,
-  });
+  if (!businessId) {
+    throw Error;
+  }
+
+  const { data, error } = await supabase
+    .from('sms_templates')
+    .insert({
+      template: values.template as Json,
+      title: values.title as string,
+      business_id: businessId,
+    })
+    .select()
+    .limit(1)
+    .single();
 
   return { data, error };
 };

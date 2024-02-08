@@ -63,6 +63,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
       SUPABASE_URL: process.env.SUPABASE_URL,
       SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
       GOOGLE_CLIENT_KEY: process.env.GOOGLE_CLIENT_KEY,
+      CHATGPT_API_KEY: process.env.CHATGPT_API_KEY,
     },
   });
 }
