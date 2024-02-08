@@ -2,8 +2,8 @@ import { cn } from '@/lib/utils';
 import { UserAuthForm } from './components/user-auth-form';
 import { Link, useLoaderData } from '@remix-run/react';
 import { buttonVariants } from '@/components/ui/button';
-import { LoaderFunctionArgs, redirect } from '@remix-run/node';
-import { createServerClient } from '@supabase/auth-helpers-remix';
+import { LoaderFunctionArgs } from '@remix-run/node';
+
 import { getRandomOceanImage } from '~/constants/sampleImages';
 
 type Metadata = {
@@ -11,7 +11,7 @@ type Metadata = {
   description: string;
 };
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader() {
   // const response = new Response();
 
   try {
