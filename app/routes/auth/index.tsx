@@ -12,7 +12,7 @@ type Metadata = {
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const response = new Response();
+  // const response = new Response();
 
   try {
     // const supabaseClient = createServerClient(
