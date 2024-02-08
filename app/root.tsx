@@ -10,6 +10,7 @@ import {
   useLoaderData,
   useNavigation,
   useRevalidator,
+  useRouteError,
 } from '@remix-run/react';
 
 import styles from '././globals.css';
@@ -39,36 +40,43 @@ export const links: LinksFunction = () => [
 ];
 
 export async function loader({ request }: LoaderFunctionArgs) {
-  const response = new Response();
+  try {
+    const response = new Response();
 
-  const supabaseClient = createServerClient(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!,
-    { request, response }
-  );
+    const supabaseClient = createServerClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_ANON_KEY!,
+      { request, response }
+    );
 
-  const { data, error } = await supabaseClient.auth.getUser();
+    const { data, error } = await supabaseClient.auth.getUser();
 
-  if (!data) {
-    console.error('get user error', error);
-    return;
+    if (!data) {
+      console.error('get user error', error);
+      return;
+    }
+
+    const { getTheme } = await themeSessionResolver(request);
+
+    return json({
+      user: data.user,
+      themeData: getTheme(),
+      ENV: {
+        SUPABASE_URL: process.env.SUPABASE_URL,
+        SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
+        GOOGLE_CLIENT_KEY: process.env.GOOGLE_CLIENT_KEY,
+        CHATGPT_API_KEY: process.env.CHATGPT_API_KEY,
+      },
+    });
+  } catch (error) {
+    console.error(error);
   }
-
-  const { getTheme } = await themeSessionResolver(request);
-
-  return json({
-    user: data.user,
-    themeData: getTheme(),
-    ENV: {
-      SUPABASE_URL: process.env.SUPABASE_URL,
-      SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY,
-      GOOGLE_CLIENT_KEY: process.env.GOOGLE_CLIENT_KEY,
-      CHATGPT_API_KEY: process.env.CHATGPT_API_KEY,
-    },
-  });
 }
 
 export function App() {
+  const error = useRouteError();
+  console.log(error);
+
   const { ENV, user, themeData } = useLoaderData<typeof loader>();
   const [theme] = useTheme();
 
