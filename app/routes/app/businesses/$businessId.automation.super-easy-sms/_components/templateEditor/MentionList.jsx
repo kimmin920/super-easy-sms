@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import './MentionList.css';
+import './mentionList.css';
 
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
