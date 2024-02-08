@@ -4,7 +4,6 @@ import { Link } from '@remix-run/react';
 import { buttonVariants } from '@/components/ui/button';
 import { LoaderFunctionArgs, redirect } from '@remix-run/node';
 import { createServerClient } from '@supabase/auth-helpers-remix';
-import clsx from 'clsx';
 import { getRandomOceanImage } from '~/constants/sampleImages';
 
 type Metadata = {
