@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { UserAuthForm } from './components/user-auth-form';
-import { Link } from '@remix-run/react';
+import { Link, useLoaderData } from '@remix-run/react';
 import { buttonVariants } from '@/components/ui/button';
 import { LoaderFunctionArgs, redirect } from '@remix-run/node';
 import { createServerClient } from '@supabase/auth-helpers-remix';
@@ -20,17 +20,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
     { request, response }
   );
 
-  const { data, error } = await supabaseClient.auth.getUser();
+  try {
+    const { data, error } = await supabaseClient.auth.getUser();
 
-  if (error) {
-    console.error('get user error', error);
+    if (error) {
+      console.error('get user error', error);
+    }
+
+    if (data.user) {
+      return redirect('/app');
+    }
+
+    return null;
+  } catch (error) {
+    console.error(error);
+    return { error };
   }
-
-  if (data.user) {
-    return redirect('/app');
-  }
-
-  return null;
 }
 
 export const metadata: Metadata = {
@@ -39,6 +44,9 @@ export const metadata: Metadata = {
 };
 
 export default function AuthenticationPage() {
+  const { error } = useLoaderData<typeof loader>();
+
+  error && console.error(error);
   return (
     <>
       <div className='container relative h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0'>
