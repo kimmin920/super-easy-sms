@@ -11,32 +11,32 @@ type Metadata = {
   description: string;
 };
 
-export async function loader() {
-  // const response = new Response();
+// export async function loader() {
+//   // const response = new Response();
 
-  try {
-    // const supabaseClient = createServerClient(
-    //   process.env.SUPABASE_URL!,
-    //   process.env.SUPABASE_ANON_KEY!,
-    //   { request, response }
-    // );
+//   try {
+//     // const supabaseClient = createServerClient(
+//     //   process.env.SUPABASE_URL!,
+//     //   process.env.SUPABASE_ANON_KEY!,
+//     //   { request, response }
+//     // );
 
-    // const { data, error } = await supabaseClient.auth.getSession();
+//     // const { data, error } = await supabaseClient.auth.getSession();
 
-    // if (error) {
-    //   console.error('get user error', error);
-    // }
+//     // if (error) {
+//     //   console.error('get user error', error);
+//     // }
 
-    // if (data.session?.user) {
-    //   return redirect('/app');
-    // }
+//     // if (data.session?.user) {
+//     //   return redirect('/app');
+//     // }
 
-    return null;
-  } catch (error) {
-    console.error(error);
-    return { error };
-  }
-}
+//     return null;
+//   } catch (error) {
+//     console.error(error);
+//     return { error };
+//   }
+// }
 
 export const metadata: Metadata = {
   title: 'Authentication',
@@ -44,9 +44,8 @@ export const metadata: Metadata = {
 };
 
 export default function AuthenticationPage() {
-  const data = useLoaderData<typeof loader>();
-
-  data?.error && console.error(data.error);
+  const data = useLoaderData();
+  console.log(data);
 
   return (
     <>
