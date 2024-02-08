@@ -15,11 +15,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const response = new Response();
 
   try {
-    const supabaseClient = createServerClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_ANON_KEY!,
-      { request, response }
-    );
+    // const supabaseClient = createServerClient(
+    //   process.env.SUPABASE_URL!,
+    //   process.env.SUPABASE_ANON_KEY!,
+    //   { request, response }
+    // );
 
     // const { data, error } = await supabaseClient.auth.getSession();
 
