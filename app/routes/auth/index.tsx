@@ -21,13 +21,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
       { request, response }
     );
 
-    const { data, error } = await supabaseClient.auth.getUser();
+    const { data, error } = await supabaseClient.auth.getSession();
 
     if (error) {
       console.error('get user error', error);
     }
 
-    if (data.user) {
+    if (data.session?.user) {
       return redirect('/app');
     }
 
