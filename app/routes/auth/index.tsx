@@ -44,9 +44,10 @@ export const metadata: Metadata = {
 };
 
 export default function AuthenticationPage() {
-  const { error } = useLoaderData<typeof loader>();
+  const data = useLoaderData<typeof loader>();
 
-  error && console.error(error);
+  data?.error && console.error(data.error);
+
   return (
     <>
       <div className='container relative h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0'>
