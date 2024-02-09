@@ -2,41 +2,37 @@ import { cn } from '@/lib/utils';
 import { UserAuthForm } from './components/user-auth-form';
 import { Link, useLoaderData } from '@remix-run/react';
 import { buttonVariants } from '@/components/ui/button';
-import { LoaderFunctionArgs } from '@remix-run/node';
+import { LoaderFunctionArgs, redirect } from '@remix-run/node';
 
 import { getRandomOceanImage } from '~/constants/sampleImages';
+import { createServerClient } from '@supabase/auth-helpers-remix';
 
 type Metadata = {
   title: string;
   description: string;
 };
 
-// export async function loader() {
-//   // const response = new Response();
+export async function loader({ request }: LoaderFunctionArgs) {
+  const response = new Response();
 
-//   try {
-//     // const supabaseClient = createServerClient(
-//     //   process.env.SUPABASE_URL!,
-//     //   process.env.SUPABASE_ANON_KEY!,
-//     //   { request, response }
-//     // );
+  const supabaseClient = createServerClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_ANON_KEY!,
+    { request, response }
+  );
 
-//     // const { data, error } = await supabaseClient.auth.getSession();
+  const { data, error } = await supabaseClient.auth.getUser();
 
-//     // if (error) {
-//     //   console.error('get user error', error);
-//     // }
+  if (error) {
+    console.error('get user error', error);
+  }
 
-//     // if (data.session?.user) {
-//     //   return redirect('/app');
-//     // }
+  if (data.user) {
+    return redirect('/app');
+  }
 
-//     return null;
-//   } catch (error) {
-//     console.error(error);
-//     return { error };
-//   }
-// }
+  return null;
+}
 
 export const metadata: Metadata = {
   title: 'Authentication',
@@ -44,7 +40,7 @@ export const metadata: Metadata = {
 };
 
 export default function AuthenticationPage() {
-  const data = useLoaderData();
+  const data = useLoaderData<typeof loader>();
   console.log(data);
 
   return (
