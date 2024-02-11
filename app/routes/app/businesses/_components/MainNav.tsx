@@ -1,12 +1,5 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import { useParams, useNavigate } from '@remix-run/react';
+import { useParams } from '@remix-run/react';
 import { NavLink } from 'react-router-dom';
 
 const NAVS = [

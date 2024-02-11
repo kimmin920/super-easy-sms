@@ -5,8 +5,7 @@ import {
   LoaderFunctionArgs,
   redirect,
 } from '@remix-run/node';
-import { getAllCourses } from '~/services/courses.server';
-import { Form, useLoaderData } from '@remix-run/react';
+import { useLoaderData } from '@remix-run/react';
 import {
   deleteBusiness,
   getOneBusinesses,
@@ -14,6 +13,8 @@ import {
 } from '~/services/businesses.server';
 import { getUser } from '~/services/auth.server';
 import { Button } from '@/components/ui/button';
+import { ResponsiveDrawerDialog } from '~/components/ResponsiveDrawerDialog';
+import DeleteBusinessForm from './DeleteBusinessForm';
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const businessId = params.businessId;
@@ -89,17 +90,21 @@ function Business() {
         이 비즈니스와 관계된 모든 데이터는 사라지며 복구되지 않습니다
       </p>
 
-      <Form method='post' onKeyDown={(e) => e.preventDefault()}>
-        <input name='id' hidden value={business.id} />
-        <Button
-          variant='destructive'
-          type='submit'
-          name='_action'
-          value='delete'
-        >
-          Delete business
-        </Button>
-      </Form>
+      <ResponsiveDrawerDialog
+        button={
+          <Button variant='destructive' type='button'>
+            Delete Business
+          </Button>
+        }
+        form={
+          <DeleteBusinessForm
+            businessId={business.id}
+            businessName={business.name}
+          />
+        }
+        title={'Delete Business'}
+        description={''}
+      />
     </div>
   );
 }

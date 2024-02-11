@@ -28,20 +28,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+
 import { Form, useNavigate, useParams } from '@remix-run/react';
 import { BusinessType } from '~/types/collection';
 import CreateBusinessForm from './CreateBusinessInputs';
@@ -60,22 +52,14 @@ export default function BusinessSwitcher({
   businesses,
   className,
 }: BusinessSwitcherProps) {
-  const params = useParams();
-
   const navigate = useNavigate();
 
   const [open, setOpen] = React.useState(false);
   const [showNewBusinessDialog, setShowNewBusinessDialog] =
     React.useState(false);
 
-  const [selectedBusiness, setSelectedBusiness] = React.useState<BusinessType>(
-    businesses.find((datum) => datum.id.toString() === selectedBusinessId) ?? {
-      created_at: '',
-      id: 0,
-      name: '',
-      plan: '',
-      user_id: '',
-    }
+  const selectedBusiness = businesses.find(
+    (datum) => datum.id.toString() === selectedBusinessId
   );
 
   return (

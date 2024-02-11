@@ -15,22 +15,22 @@ const sidebarNavItems = [
     title: 'Business',
     href: 'business',
   },
-  {
-    title: 'Account',
-    href: 'account',
-  },
+  // {
+  //   title: 'Account',
+  //   href: 'account',
+  // },
   {
     title: 'Appearance',
     href: 'appearance',
   },
-  {
-    title: 'Notifications',
-    href: 'notifications',
-  },
-  {
-    title: 'Display',
-    href: 'display',
-  },
+  // {
+  //   title: 'Notifications',
+  //   href: 'notifications',
+  // },
+  // {
+  //   title: 'Display',
+  //   href: 'display',
+  // },
 ];
 
 export default function SettingsLayout() {

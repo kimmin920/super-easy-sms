@@ -3,18 +3,14 @@ import {
   Link,
   NavLink,
   Outlet,
-  useActionData,
   useLoaderData,
-  useOutletContext,
   useParams,
-  useRevalidator,
 } from '@remix-run/react';
 
 import BusinessSwitcher from './_components/BusinessSwitcher';
 
 import { MainNav } from '~/routes/app/businesses/_components/MainNav';
 import { UserNav } from './_components/UserNav';
-import { Search } from './_components/Search';
 
 import { createServerClient } from '@supabase/auth-helpers-remix';
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from '@remix-run/node';
@@ -23,7 +19,6 @@ import { Database } from '~/types/supabase';
 import CreateBusinessForm from './_components/CreateBusinessInputs';
 import { Button } from '@/components/ui/button';
 import { SupabaseUserType } from '~/types/collection';
-import { useEffect } from 'react';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { HamburgerMenuIcon, SunIcon } from '@radix-ui/react-icons';
 
@@ -157,7 +152,7 @@ function BuisinessRoute() {
         </Sheet>
       </div>
 
-      <div className='flex-1 space-y-4 p-8 pt-6 container'>
+      <div className='flex-1 space-y-4 pt-6 container px-4 md:px-8'>
         <Outlet
           context={{
             selectedBusinessId: params.businessId,

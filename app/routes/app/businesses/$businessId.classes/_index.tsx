@@ -44,7 +44,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     billingFrequency,
     classCount,
   } = values;
-  console.log(businessId);
+
   if (_action === 'create') {
     const { data, error } = await supabase.from('classes').insert({
       name,

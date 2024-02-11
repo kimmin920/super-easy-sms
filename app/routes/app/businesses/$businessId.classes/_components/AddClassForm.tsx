@@ -17,7 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Form as RemixForm, useParams } from '@remix-run/react';
+import { Form as RemixForm, useNavigation, useParams } from '@remix-run/react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
@@ -182,15 +182,12 @@ function AddClassForm({
 }: AddClassFormProps) {
   const params = useParams();
   const businessId = params.businessId;
+  const navigation = useNavigation();
 
   const form = useForm<AppearanceFormValues>({
     resolver: zodResolver(appearanceFormSchema),
     defaultValues: defaultValues ?? DEFAULT_VALUES,
   });
-
-  // function onSubmit(formValues: AppearanceFormValues) {
-  //   submit(formValues, { method: 'POST', action: '' });
-  // }
 
   function numberTypeOverride(each: FormDataType) {
     return (
@@ -198,6 +195,8 @@ function AddClassForm({
     );
   }
 
+  const isSubmitLoading =
+    navigation.state === 'submitting' || navigation.state === 'loading';
   return (
     <Form {...form}>
       <RemixForm
@@ -245,7 +244,12 @@ function AddClassForm({
             />
           );
         })}
-        <Button type='submit' name='_action' value={actionType}>
+        <Button
+          type='submit'
+          name='_action'
+          value={actionType}
+          disabled={isSubmitLoading}
+        >
           Save
         </Button>
       </RemixForm>
