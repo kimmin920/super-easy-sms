@@ -17,26 +17,28 @@ interface HolidayCalendarProps {
   setHolidayDates: React.Dispatch<React.SetStateAction<Date[]>>;
   fromDate?: Date;
   toDate?: Date;
+  numberOfMonths: number;
 }
 
 export function HolidayCalendar({
   holidayDates,
   fromDate,
   toDate,
+  numberOfMonths,
   setHolidayDates,
 }: HolidayCalendarProps) {
   return (
     <>
       <style>{css}</style>
       <CalendarCore
-        mode='multiple'
-        numberOfMonths={2}
+        mode='single'
+        numberOfMonths={numberOfMonths}
         today={undefined}
         fromDate={fromDate}
         toDate={toDate}
         selected={holidayDates}
         onSelect={setHolidayDates}
-        className='rounded-md border shadow'
+        className='rounded-md border shadow justify-center flex w-full'
         modifiersClassNames={{
           selected: 'holiday-selected',
         }}

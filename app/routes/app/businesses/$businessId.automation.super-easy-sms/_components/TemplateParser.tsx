@@ -2,6 +2,7 @@ import React from 'react';
 import { TemplateVariable } from './TemplateVariable';
 
 import { parseContent } from '../utils';
+import { Card } from '@/components/ui/card';
 interface Props {
   template: string;
 }
@@ -12,7 +13,7 @@ function TemplateParser({ template }: Props) {
   const output = parseContent(parsedTemplate?.content);
 
   return (
-    <div>
+    <Card className='w-[300px] px-4 py-2'>
       {output.map((content, index) => {
         if (content.type === 'mention') {
           // Wrap `${text}` in a div
@@ -25,7 +26,7 @@ function TemplateParser({ template }: Props) {
           return <React.Fragment key={index}>{content.text}</React.Fragment>;
         }
       })}
-    </div>
+    </Card>
   );
 }
 
