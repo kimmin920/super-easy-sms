@@ -102,8 +102,7 @@ export function CardsChat() {
   const [input, setInput] = React.useState('');
   const inputLength = input.trim().length;
 
-  const isGPTLoading =
-    navigation.state === 'submitting' || navigation.state === 'loading';
+  const isGPTLoading = navigation.state === 'submitting';
 
   return (
     <>

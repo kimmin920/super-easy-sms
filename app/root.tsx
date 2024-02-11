@@ -126,14 +126,14 @@ export function App() {
       });
 
       // google login prompt 뜨게 하기
-      google.accounts.id.prompt();
+      !user && google.accounts.id.prompt();
     };
 
     return () => {
       const gscript = document.getElementById('google-one-tab-login');
       gscript?.remove();
     };
-  }, [supabase]);
+  }, [supabase, user]);
 
   return (
     <html lang='en' className={clsx(theme)}>
