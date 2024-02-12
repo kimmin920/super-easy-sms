@@ -233,7 +233,11 @@ function SuperEasySms() {
               <div className='flex flex-col gap-4'>
                 <div className='flex flex-col'>
                   <Label>정산 기간</Label>
-                  <DatePickerWithRange date={date} setDate={setDate} />
+                  <DatePickerWithRange
+                    className='pt-2'
+                    date={date}
+                    setDate={setDate}
+                  />
                 </div>
 
                 <div className='flex flex-col'>
@@ -260,6 +264,7 @@ function SuperEasySms() {
                     </TooltipProvider>
                   </div>
                   <HolidayCalendar
+                    className='mt-2'
                     numberOfMonths={isDesktop ? 2 : 1}
                     holidayDates={holidays}
                     setHolidayDates={setHolidays}
@@ -271,7 +276,7 @@ function SuperEasySms() {
                 <div className='flex flex-col'>
                   <Label>문자 템플릿</Label>
                   <SMSTemplateSwitcher
-                    className='w-[300px]'
+                    className='w-[300px] mt-2'
                     selectedTemplateId={selectedTemplateId}
                     messageTemplates={templates}
                     onClickTemplate={onClickTemplate}

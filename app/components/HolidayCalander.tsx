@@ -1,6 +1,7 @@
 'use client';
 
 import { Calendar as CalendarCore } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
 
 const css = `
   .holiday-selected:not([disabled]) {
@@ -18,6 +19,7 @@ interface HolidayCalendarProps {
   fromDate?: Date;
   toDate?: Date;
   numberOfMonths: number;
+  className?: string;
 }
 
 export function HolidayCalendar({
@@ -25,6 +27,7 @@ export function HolidayCalendar({
   fromDate,
   toDate,
   numberOfMonths,
+  className,
   setHolidayDates,
 }: HolidayCalendarProps) {
   return (
@@ -38,7 +41,10 @@ export function HolidayCalendar({
         toDate={toDate}
         selected={holidayDates}
         onSelect={setHolidayDates}
-        className='rounded-md border shadow justify-center flex w-full'
+        className={cn(
+          'rounded-md border shadow justify-center flex w-full',
+          className
+        )}
         modifiersClassNames={{
           selected: 'holiday-selected',
         }}

@@ -17,7 +17,7 @@ import {
 
 export default function CreateBusinessFormInputs() {
   return (
-    <div>
+    <div className='w-full'>
       <div className='space-y-4 py-2 pb-4'>
         <div className='space-y-2'>
           <input
@@ -25,7 +25,7 @@ export default function CreateBusinessFormInputs() {
             name='user_id'
             value={'8f56d325-8a9a-4215-9b16-11d4b3e1ac79'}
           />
-          <Label htmlFor='name'>Business name</Label>
+          <Label htmlFor='name'>Name</Label>
           <Input id='name' name='name' placeholder='학원이름..' />
         </div>
         <div className='space-y-2'>

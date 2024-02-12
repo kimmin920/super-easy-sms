@@ -21,6 +21,20 @@ import { Button } from '@/components/ui/button';
 import { SupabaseUserType } from '~/types/collection';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { HamburgerMenuIcon, SunIcon } from '@radix-ui/react-icons';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card } from '@/components/ui/card';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
+import { Separator } from '@/components/ui/separator';
+import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
+import { BackgroundBeams } from '@/components/animation/BackgroundBeams';
+import { ResponsiveDrawerDialog } from '~/components/ResponsiveDrawerDialog';
 
 export interface businessOutletContextType {
   selectedBusinessId: string;
@@ -76,7 +90,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 };
 
 function BuisinessRoute() {
-  const { businesses, user, error } = useLoaderData<typeof loader>();
+  const { businesses, user } = useLoaderData<typeof loader>();
+  const [createBusinessOpen, setCreateBusinessOpen] = useState(false);
 
   const params = useParams();
 
@@ -85,24 +100,83 @@ function BuisinessRoute() {
     !businesses.some((each) => each.id.toString() === params.businessId)
   ) {
     return (
-      <div>
-        please choose business
-        <div className='md:p-8 lg:p-8'>
-          <div className='rounded-xl border bg-card text-card-foreground shadow'>
-            <div className='flex flex-col p-6 space-y-1'>
-              <Form method='post' action={`/action/create-business`}>
-                <CreateBusinessForm />
-                <Button type='submit'>Create Business</Button>
-              </Form>
+      <div className='w-screen h-screen dark:bg-black bg-white dark:bg-dot-white/[0.2] bg-dot-black/[0.2] relative flex items-center justify-center'>
+        {/* <BackgroundBeams /> */}
+        <Card className='w-[350px] p-6 z-50'>
+          <div className='flex space-y-1.5 items-center'>
+            <div className='flex flex-col'>
+              <h2 className='font-semibold leading-none tracking-tight text-lg'>
+                Your Businesses
+              </h2>
+              <p className='text-sm text-muted-foreground'>
+                학원을 생성하거나 선택해주세요!
+              </p>
             </div>
+
+            <ResponsiveDrawerDialog
+              title={'학원 생성하기 ✨'}
+              description=''
+              button={
+                <Button
+                  size='icon'
+                  variant='outline'
+                  className='ml-auto rounded-full'
+                  onClick={() => setCreateBusinessOpen(true)}
+                >
+                  <Plus className='h-4 w-4' />
+                  <span className='sr-only'>Add new business</span>
+                </Button>
+              }
+              form={
+                <Form
+                  method='post'
+                  action={`/action/create-business`}
+                  className='flex flex-col items-start w-full md:w-[350px]'
+                >
+                  <CreateBusinessForm />
+                  <Button className='mt-6 w-full' type='submit'>
+                    Create ✈️
+                  </Button>
+                </Form>
+              }
+            />
           </div>
 
-          {businesses.map((business) => (
-            <div key={business.id}>
-              <NavLink to={business.id.toString()}>{business.name}</NavLink>
-            </div>
-          ))}
-        </div>
+          <Separator className='my-4' />
+
+          <div className='grid gap-6'>
+            {businesses.length === 0 ? (
+              <div className='flex justify-center items-center text-sm text-muted-foreground text-center h-[100px] my-auto'>
+                학원이 아직 없습니다!
+              </div>
+            ) : (
+              businesses.map((business) => (
+                <div
+                  key={business.id}
+                  className='flex items-center justify-between'
+                >
+                  <div className='flex items-center space-x-4'>
+                    <Avatar>
+                      <AvatarImage src='/avatars/01.png' alt='Image' />
+                      <AvatarFallback>{business.name[0]}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className='text-sm font-medium leading-none'>
+                        {business.name}
+                      </p>
+                      <p className='text-sm text-muted-foreground'>
+                        #{business.id}
+                      </p>
+                    </div>
+                  </div>
+                  <NavLink to={business.id.toString()}>
+                    <Button variant='outline'>Enter</Button>
+                  </NavLink>
+                </div>
+              ))
+            )}
+          </div>
+        </Card>
       </div>
     );
   }
