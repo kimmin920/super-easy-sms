@@ -34,7 +34,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 
-import { Form, useNavigate, useParams } from '@remix-run/react';
+import { Form, useNavigate } from '@remix-run/react';
 import { BusinessType } from '~/types/collection';
 import CreateBusinessForm from './CreateBusinessInputs';
 
@@ -98,7 +98,6 @@ export default function BusinessSwitcher({
                   <CommandItem
                     key={business.id.toString()}
                     onSelect={() => {
-                      setSelectedBusiness(business);
                       setOpen(false);
                       navigate(`${business.id}`);
                     }}

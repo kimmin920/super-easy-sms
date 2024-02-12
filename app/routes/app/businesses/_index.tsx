@@ -23,17 +23,9 @@ import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
 import { HamburgerMenuIcon, SunIcon } from '@radix-ui/react-icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card } from '@/components/ui/card';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
-import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
-import { BackgroundBeams } from '@/components/animation/BackgroundBeams';
 import { ResponsiveDrawerDialog } from '~/components/ResponsiveDrawerDialog';
 
 export interface businessOutletContextType {

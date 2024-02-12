@@ -4,7 +4,6 @@ import MentionList from './MentionList.jsx';
 
 const KEYWORD_OPTIONS = [
   '학생이름',
-  '학생',
   '정산시작일',
   '정산종료일',
   '정산금액',

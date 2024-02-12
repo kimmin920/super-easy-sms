@@ -16,7 +16,6 @@ function TemplateParser({ template }: Props) {
     <Card className='w-[300px] px-4 py-2 mt-2'>
       {output.map((content, index) => {
         if (content.type === 'mention') {
-          // Wrap `${text}` in a div
           return (
             <span key={index}>
               <TemplateVariable label={content.id ?? ''} />
