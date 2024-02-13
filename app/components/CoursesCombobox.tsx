@@ -70,7 +70,7 @@ function CoursesCombobox({
           <CommandGroup>
             {courses.map((course) => (
               <CommandItem
-                value={course.name ?? ''}
+                value={course.id.toString()}
                 key={course.id}
                 onSelect={() => onClickCourse(course.id)}
               >
