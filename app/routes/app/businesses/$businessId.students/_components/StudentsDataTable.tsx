@@ -34,13 +34,14 @@ import { useNavigate } from '@remix-run/react';
 
 export interface StudentsDataTableProps {
   data: StudentWithCourse[];
+  defaultColumnVisibility?: VisibilityState;
 }
 
-function StudentsDataTable({ data }: StudentsDataTableProps) {
+function StudentsDataTable({ data ,defaultColumnVisibility }: StudentsDataTableProps) {
   const navigate = useNavigate();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(defaultColumnVisibility ?? {});
   const [rowSelection, setRowSelection] = useState({});
 
   const table = useReactTable({
@@ -61,6 +62,8 @@ function StudentsDataTable({ data }: StudentsDataTableProps) {
       rowSelection,
     },
   });
+
+  console.log(columnVisibility)
 
   function onClickEditStudent(id: number) {
     navigate(`${id}/edit`);
