@@ -119,6 +119,7 @@ export function templateMessageInjector(
   content: JSONContent['content'],
   mentionValueMap: Record<string, unknown>
 ) {
+  console.log(content)
   if (!content) {
     return null;
   }

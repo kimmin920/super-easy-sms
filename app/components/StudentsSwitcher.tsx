@@ -4,7 +4,6 @@ import * as React from 'react';
 import {
   CaretSortIcon,
   CheckIcon,
-  PlusCircledIcon,
 } from '@radix-ui/react-icons';
 
 import { cn } from '@/lib/utils';
@@ -19,60 +18,38 @@ import {
   CommandSeparator,
 } from '@/components/ui/command';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover';
+import { StudentWithCourse } from '~/types/collection';
 
-import AddTemplateForm from './AddTemplateForm';
-
-// NOTE: this is mock
-const switcherGroup = [
-  {
-    label: 'SMS Templates',
-    templates: [],
-  },
-];
-
-type Business = (typeof switcherGroup)[number]['templates'][number];
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
 >;
 
-interface TemplateSwitcherProps extends PopoverTriggerProps {
-  selectedTemplateId: number | null;
-  messageTemplates: any[];
+interface StudentsSwitcherProps extends PopoverTriggerProps {
+  selectedStudentId: number | null;
+  students: StudentWithCourse[];
   onClickTemplate: (id: number) => void;
 }
 
-export default function SMSTemplateSwitcher({
-  selectedTemplateId,
+export default function StudentsSwitcher({
+  selectedStudentId,
   className,
-  messageTemplates,
+  students,
   onClickTemplate,
-}: TemplateSwitcherProps) {
+}: StudentsSwitcherProps) {
   const [open, setOpen] = React.useState(false);
-  const [showNewBusinessDialog, setShowNewBusinessDialog] =
-    React.useState(false);
 
-  const selectedTemplate = messageTemplates.find(
-    (each) => each.id === selectedTemplateId
+
+  const selectedTemplate = students.find(
+    (each) => each.id === selectedStudentId
   );
 
   return (
-    <Dialog
-      open={showNewBusinessDialog}
-      onOpenChange={setShowNewBusinessDialog}
-    >
+    
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
@@ -82,7 +59,7 @@ export default function SMSTemplateSwitcher({
             aria-label='Select a template'
             className={cn('w-[200px] justify-between', className)}
           >
-            {selectedTemplate?.title}
+            {selectedTemplate?.name ?? '학생 선택'}
             <CaretSortIcon className='ml-auto h-4 w-4 shrink-0 opacity-50' />
           </Button>
         </PopoverTrigger>
@@ -92,21 +69,21 @@ export default function SMSTemplateSwitcher({
               <CommandInput placeholder='Search templates...' />
               <CommandEmpty>No Message found.</CommandEmpty>
               <CommandGroup heading='templates'>
-                {messageTemplates.map((template) => (
+                {students.map((template) => (
                   <CommandItem
-                    value={template.id.toString()}
                     key={template.id}
+                    value={template.id.toString()}
                     onSelect={() => {
                       onClickTemplate(template.id);
                       setOpen(false);
                     }}
                     className='text-sm'
                   >
-                    {template.title}
+                    {template.name}
                     <CheckIcon
                       className={cn(
                         'ml-auto h-4 w-4',
-                        selectedTemplateId === template.id
+                        selectedStudentId === template.id
                           ? 'opacity-100'
                           : 'opacity-0'
                       )}
@@ -116,34 +93,9 @@ export default function SMSTemplateSwitcher({
               </CommandGroup>
             </CommandList>
             <CommandSeparator />
-            <CommandList>
-              <CommandGroup>
-                <DialogTrigger asChild>
-                  <CommandItem
-                    onSelect={() => {
-                      setOpen(false);
-                      setShowNewBusinessDialog(true);
-                    }}
-                  >
-                    <PlusCircledIcon className='mr-2 h-5 w-5' />
-                    Create Template
-                  </CommandItem>
-                </DialogTrigger>
-              </CommandGroup>
-            </CommandList>
           </Command>
         </PopoverContent>
       </Popover>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Create Template</DialogTitle>
-          <DialogDescription>
-            Add a new Template to manage products and customers.
-          </DialogDescription>
-        </DialogHeader>
 
-        <AddTemplateForm close={() => setShowNewBusinessDialog(false)} />
-      </DialogContent>
-    </Dialog>
   );
 }

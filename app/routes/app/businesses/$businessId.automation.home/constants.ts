@@ -8,6 +8,14 @@ export const AUTOMATION_LIST = [
     status: 'active',
   },
   {
+    to: 'simple-message',
+    title: 'simple-message',
+    contentText: 'Simple Message',
+    description: '간단히 메세지 보내요',
+    icon: 'card',
+    status: 'active',
+  },
+  {
     to: 'generate-time-table',
     title: 'Time Table',
     contentText: '시간표',

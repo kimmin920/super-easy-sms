@@ -13,7 +13,7 @@ function TemplateParser({ template }: Props) {
   const output = parseContent(parsedTemplate?.content);
 
   return (
-    <Card className='w-[300px] px-4 py-2 mt-2'>
+    <Card className='w-[300px] px-4 py-2 mt-2 rounded-md'>
       {output.map((content, index) => {
         if (content.type === 'mention') {
           return (
