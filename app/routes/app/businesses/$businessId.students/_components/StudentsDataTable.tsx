@@ -63,8 +63,6 @@ function StudentsDataTable({ data ,defaultColumnVisibility }: StudentsDataTableP
     },
   });
 
-  console.log(columnVisibility)
-
   function onClickEditStudent(id: number) {
     navigate(`${id}/edit`);
   }
