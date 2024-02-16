@@ -16,6 +16,14 @@ export const AUTOMATION_LIST = [
     status: 'active',
   },
   {
+    to: 'excel-import',
+    title: 'excel-import',
+    contentText: 'EXCEL 데이터 불러오기',
+    description: 'Excel 데이터를 아주쉽게 가져오세요!',
+    icon: 'grid',
+    status: 'active',
+  },
+  {
     to: 'generate-time-table',
     title: 'Time Table',
     contentText: '시간표',
@@ -47,12 +55,5 @@ export const AUTOMATION_LIST = [
     icon: 'people',
     status: 'deactive',
   },
-  {
-    to: 'excel-import',
-    title: 'excel-import',
-    contentText: 'EXCEL 데이터 불러오기',
-    description: 'Excel 데이터를 아주쉽게 가져오세요!',
-    icon: 'grid',
-    status: 'deactive',
-  },
+  
 ];
