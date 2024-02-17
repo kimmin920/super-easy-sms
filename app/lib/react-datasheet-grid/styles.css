@@ -1,0 +1,7 @@
+.has-error {
+  box-shadow: 0 0 0 1px inset hsl(var(--destructive));
+}
+
+.dsg-container {
+  height: 100%;
+}

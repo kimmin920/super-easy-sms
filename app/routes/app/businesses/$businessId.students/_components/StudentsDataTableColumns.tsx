@@ -37,10 +37,10 @@ export const StudentsDataTableColumns: ColumnDef<StudentWithCourse>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'status',
+    accessorKey: 'active',
     header: 'Status',
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue('status')}</div>
+      <div className='capitalize'>{row.getValue('active') === true ? '재원생' : '퇴원생(?)'}</div>
     ),
   },
   {
