@@ -34,7 +34,7 @@ export function HolidayCalendar({
     <>
       <style>{css}</style>
       <CalendarCore
-        mode='single'
+        mode='multiple'
         numberOfMonths={numberOfMonths}
         today={undefined}
         fromDate={fromDate}

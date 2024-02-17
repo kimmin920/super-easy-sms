@@ -15,6 +15,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   if (error) {
     console.error('get user error', error);
+    return redirect('/auth');
   }
 
   if (!data.user) {
@@ -28,7 +29,7 @@ function AppLayout() {
   const context = useOutletContext();
 
   return (
-    <div className='app-layout'>
+    <div className='app-layout h-full'>
       <Outlet context={context} />
     </div>
   );

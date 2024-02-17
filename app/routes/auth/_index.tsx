@@ -1,6 +1,6 @@
 import { cn } from '@/lib/utils';
 import { UserAuthForm } from './components/user-auth-form';
-import { Link, useLoaderData } from '@remix-run/react';
+import { Link } from '@remix-run/react';
 import { buttonVariants } from '@/components/ui/button';
 import { LoaderFunctionArgs, redirect } from '@remix-run/node';
 
@@ -28,7 +28,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   if (data.user) {
-    return redirect('/app');
+    return redirect('/app/businesses');
   }
 
   return null;
@@ -40,9 +40,6 @@ export const metadata: Metadata = {
 };
 
 export default function AuthenticationPage() {
-  const data = useLoaderData<typeof loader>();
-  console.log(data);
-
   return (
     <>
       <div className='container relative h-screen flex-col items-center justify-center grid lg:max-w-none lg:grid-cols-2 lg:px-0'>

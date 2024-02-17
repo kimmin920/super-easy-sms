@@ -15,6 +15,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
       process.env.SUPABASE_ANON_KEY!,
       { request, response }
     );
+
     await supabaseClient.auth.exchangeCodeForSession(code);
   }
 

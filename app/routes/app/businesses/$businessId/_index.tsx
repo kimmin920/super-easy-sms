@@ -1,7 +1,6 @@
 import { ActionFunctionArgs } from '@remix-run/node';
 import { Outlet } from '@remix-run/react';
 import { createServerClient } from '@supabase/auth-helpers-remix';
-import { createClient } from '@supabase/supabase-js';
 import { Database } from '~/types/supabase';
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -41,11 +40,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 function Business() {
-  return (
-    <div>
-      <Outlet />
-    </div>
-  );
+  return <Outlet />;
 }
 
 export default Business;

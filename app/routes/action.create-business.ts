@@ -32,7 +32,7 @@ export async function action({ request }: ActionFunctionArgs) {
     .select();
 
   if (data) {
-    return redirect(`/app/businesses/${data[0].id}`);
+    return redirect(`/app/businesses/${data[0].id}/home`);
   }
 
   // NOTE error handling..

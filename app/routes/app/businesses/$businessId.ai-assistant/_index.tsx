@@ -23,7 +23,8 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 const Home: React.FC = () => {
-  return <ChatComponent />;
+  return <>COMMING SOON...</>;
+  // return <ChatComponent />;
 };
 
 export default Home;

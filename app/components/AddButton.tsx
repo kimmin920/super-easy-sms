@@ -1,13 +1,17 @@
+import { cn } from '@/lib/utils';
 import React from 'react';
 
-interface AddButtonProps extends React.HTMLAttributes<HTMLButtonElement> {
+interface AddButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
 }
 
-function AddButton({ label, ...props }: AddButtonProps) {
+function AddButton({ label, className, ...props }: AddButtonProps) {
   return (
     <button
-      className='inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2'
+      className={cn(
+        'inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2',
+        className
+      )}
       {...props}
     >
       <svg

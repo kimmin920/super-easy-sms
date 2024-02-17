@@ -2,7 +2,7 @@ import { addDays, format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import koreaHolidaysJson from 'app/holidays/holidays.json';
 
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 import { DateRange } from 'react-day-picker';
 import { HolidayCalendar } from '~/components/HolidayCalander';
 import { DatePickerWithRange } from '~/components/DatePickerWithRange';
@@ -13,7 +13,7 @@ import {
   StudentsDataTable,
   StudentsDataTableProps,
 } from './_components/StudentsDataTable';
-import { GearIcon, MagicWandIcon, ReloadIcon } from '@radix-ui/react-icons';
+import { GearIcon, ReloadIcon } from '@radix-ui/react-icons';
 import { getDatesBetween, templateMessageInjector } from './utils';
 import { createClient } from '@supabase/supabase-js';
 import { useLoaderData } from '@remix-run/react';
@@ -28,7 +28,6 @@ import {
 import { ResponsiveDrawerDialog } from '~/components/ResponsiveDrawerDialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@radix-ui/react-label';
-import { FormItem, FormLabel } from '@/components/ui/form';
 import {
   Tooltip,
   TooltipContent,
@@ -43,7 +42,7 @@ interface NonNullableDateRande {
   to: NonNullable<DateRange['to']>;
 }
 
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   const businessId = params.businessId;
 
   if (!businessId) {
@@ -139,7 +138,7 @@ function SuperEasySms() {
             (prevHoliday) => prevHoliday.getTime() === newHoliday.getTime()
           )
       );
-
+      console.log('new-holidays', newHolidays);
       return prev.concat(newHolidays);
     });
   }

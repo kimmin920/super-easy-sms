@@ -25,6 +25,7 @@ import { z } from 'zod';
 import CoursesCombobox from '~/components/CoursesCombobox';
 import { CourseType } from '~/types/collection';
 import AddButton from '~/components/AddButton';
+import DaySelect from '../../$businessId.classes/_components/DaySelect';
 
 type AddStudentSheetProps = {
   courses: CourseType[];

@@ -2,11 +2,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ControllerRenderProps, useForm } from 'react-hook-form';
+import { ControllerRenderProps, useFieldArray, useForm } from 'react-hook-form';
 import * as z from 'zod';
 
 import { cn } from '@/lib/utils';
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import {
   Form,
@@ -23,9 +23,13 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { SAMPLE_CLASS_IMGS } from '~/constants/sampleImages';
+import DaySelect from './DaySelect';
+import { PlusCircledIcon } from '@radix-ui/react-icons';
+import { Trash2 } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 interface FormDataType {
-  id: keyof AppearanceFormValues;
+  id: keyof ClassFormValues;
   label: string;
   defaultLabel: string | number;
   description?: string;
@@ -38,16 +42,6 @@ interface OptionsType {
   status: 'enabled' | 'disabled';
   label: string;
 }
-
-const daysOptions: OptionsType[] = [
-  { value: 'MONDAY', status: 'enabled', label: 'Monday' },
-  { value: 'TUESDAY', status: 'enabled', label: 'Tuesday' },
-  { value: 'WEDNESDAY', status: 'enabled', label: 'Wednesday' },
-  { value: 'THURSDAY', status: 'enabled', label: 'Thursday' },
-  { value: 'FRIDAY', status: 'enabled', label: 'Friday' },
-  { value: 'SATURDAY', status: 'enabled', label: 'Saturday' },
-  { value: 'SUNDAY', status: 'enabled', label: 'Sunday' },
-];
 
 const billingFrequencyOptions: OptionsType[] = [
   {
@@ -112,18 +106,17 @@ const CLASS_FORM_DATA: FormDataType[] = [
     options: billingFrequencyOptions,
   },
   {
-    label: 'scheduledDays',
-    defaultLabel: 'scheduledDays...',
-    type: 'multiple-checkbox',
-    id: 'scheduledDays',
-    options: daysOptions,
+    label: 'times',
+    defaultLabel: '',
+    type: 'fields',
+    id: 'time',
   },
-  {
-    label: 'classCount',
-    defaultLabel: 'classCount...',
-    type: 'number',
-    id: 'classCount',
-  },
+  // {
+  //   label: 'classCount',
+  //   defaultLabel: 'classCount...',
+  //   type: 'number',
+  //   id: 'classCount',
+  // },
 ];
 
 const appearanceFormSchema = z.object({
@@ -140,22 +133,27 @@ const appearanceFormSchema = z.object({
   coverImgSrc: z.string({
     required_error: 'Please select a img or upload.',
   }),
-  scheduledDays: z.array(
-    z.enum([
-      'MONDAY',
-      'TUESDAY',
-      'WEDNESDAY',
-      'THURSDAY',
-      'FRIDAY',
-      'SATURDAY',
-      'SUNDAY',
-    ] as const)
-  ),
   billingFrequency: z.enum(['MONTHLY', 'WEEKLY', 'DAILY']),
-  classCount: z.number(),
+  // classCount: z.number(),
+  time: z.array(
+    z.object({
+      id: z.number(),
+      day: z.enum([
+        'MONDAY',
+        'TUESDAY',
+        'WEDNESDAY',
+        'THURSDAY',
+        'FRIDAY',
+        'SATURDAY',
+        'SUNDAY',
+      ]),
+      startTime: z.string().datetime(),
+      endTime: z.string().datetime(),
+    })
+  ),
 });
 
-const DEFAULT_VALUES: Partial<AppearanceFormValues> = {
+const DEFAULT_VALUES: Partial<ClassFormValues> = {
   coverImgSrc: SAMPLE_CLASS_IMGS[0].imgSrc,
   name: '',
   description: '',
@@ -163,15 +161,15 @@ const DEFAULT_VALUES: Partial<AppearanceFormValues> = {
   price: 100,
   priceDescription: '',
   billingFrequency: 'MONTHLY',
-  classCount: 0,
-  scheduledDays: [],
+  // classCount: 0,
+  time: [{ id: 1, day: 'MONDAY', startTime: '09:00', endTime: '12:00' }],
 };
 
-type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
+export type ClassFormValues = z.infer<typeof appearanceFormSchema>;
 
 interface AddClassFormProps extends React.ComponentProps<'form'> {
   actionType: 'create' | 'update';
-  defaultValues?: Partial<AppearanceFormValues>;
+  defaultValues?: Partial<ClassFormValues>;
   courseId?: number;
 }
 function AddClassForm({
@@ -184,9 +182,17 @@ function AddClassForm({
   const businessId = params.businessId;
   const navigation = useNavigation();
 
-  const form = useForm<AppearanceFormValues>({
+  const form = useForm<ClassFormValues>({
     resolver: zodResolver(appearanceFormSchema),
     defaultValues: defaultValues ?? DEFAULT_VALUES,
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'time',
+    rules: {
+      minLength: 1,
+    },
   });
 
   function numberTypeOverride(each: FormDataType) {
@@ -211,39 +217,124 @@ function AddClassForm({
               key={each.id}
               control={form.control}
               name={each.id}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{each.label}</FormLabel>
-                  <FormControl>
-                    {each.type === 'multiple-checkbox' ? (
-                      <MultipleCheckbox
-                        options={each.options ?? []}
-                        field={field}
-                      />
-                    ) : each.type === 'radio' ? (
-                      <RadioGroupInput
-                        options={each.options ?? []}
-                        field={field}
-                      />
-                    ) : each.id === 'coverImgSrc' ? (
-                      <ImgFormField key={each.id} field={field} />
-                    ) : (
-                      <Input
-                        className='focus-visible:ring-1 focus-visible:ring-offset-0'
-                        placeholder={each.defaultLabel.toString()}
-                        type={each.type}
-                        {...field}
-                        {...numberTypeOverride(each)}
-                      />
-                    )}
-                  </FormControl>
-                  <FormDescription>{each.description}</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
+              render={({ field }) => {
+                if (field.name === 'time') {
+                  return (
+                    <>
+                      <Separator />
+                      <div>
+                        {/* className='rounded-lg border p-3 bg-muted */}
+                        <input
+                          name='scheduleCount'
+                          hidden
+                          value={fields.length}
+                        />
+                        <FormLabel>수업 스케쥴</FormLabel>
+                        <p className='text-[0.8rem] text-muted-foreground'>
+                          수업 스케쥴을 추가하고 요일과 시작/끝 시간을
+                          설정하세요.
+                        </p>
+
+                        <div className='flex mt-2'>
+                          <span className='w-[82px] mr-1 text-xs'>Day</span>
+                          <span className='flex-1 mr-1 text-xs'>
+                            Start time
+                          </span>
+                          <span className='flex-1 mr-1 text-xs'>End time</span>
+                          <span className='w-[36px]'></span>
+                        </div>
+
+                        {fields.map((innerField, index) => {
+                          return (
+                            <Fragment key={innerField.id}>
+                              <div className='flex mt-2'>
+                                <DaySelect
+                                  {...form.register(`time.${index}.day`)}
+                                  defaultValue={innerField.day}
+                                  onValueChange={field.onChange}
+                                  className='flex-1 mr-1 text-sm'
+                                />
+                                <Input
+                                  className='mr-1 focus-visible:ring-1 focus-visible:ring-offset-0'
+                                  type='time'
+                                  {...form.register(`time.${index}.startTime`)}
+                                />
+                                <Input
+                                  className='mr-1 focus-visible:ring-1 focus-visible:ring-offset-0'
+                                  type='time'
+                                  {...form.register(`time.${index}.endTime`)}
+                                />
+                                <Button
+                                  size='icon'
+                                  type='button'
+                                  variant='ghost'
+                                  className='p-2'
+                                  onClick={() => remove(index)}
+                                >
+                                  <Trash2 className='stroke-destructive' />
+                                </Button>
+                              </div>
+                            </Fragment>
+                          );
+                        })}
+
+                        <Button
+                          type='button'
+                          className='mr-auto mt-2'
+                          variant='outline'
+                          onClick={() =>
+                            append({
+                              id: fields.length,
+                              day: 'MONDAY',
+                              startTime: '09:00',
+                              endTime: '12:00',
+                            })
+                          }
+                        >
+                          <PlusCircledIcon width={20} height={20} />
+                          <span className='ml-1'>Add Day</span>
+                        </Button>
+                      </div>
+                      <Separator />
+                    </>
+                  );
+                }
+
+                return (
+                  <FormItem>
+                    <FormLabel>{each.label}</FormLabel>
+                    <FormControl>
+                      {each.type === 'multiple-checkbox' ? (
+                        <MultipleCheckbox
+                          options={each.options ?? []}
+                          field={field}
+                        />
+                      ) : each.type === 'radio' ? (
+                        <RadioGroupInput
+                          options={each.options ?? []}
+                          field={field}
+                        />
+                      ) : each.id === 'coverImgSrc' ? (
+                        <ImgFormField key={each.id} field={field} />
+                      ) : (
+                        <Input
+                          className='focus-visible:ring-1 focus-visible:ring-offset-0'
+                          placeholder={each.defaultLabel.toString()}
+                          type={each.type}
+                          {...field}
+                          {...numberTypeOverride(each)}
+                        />
+                      )}
+                    </FormControl>
+                    <FormDescription>{each.description}</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
             />
           );
         })}
+
         <Button
           type='submit'
           name='_action'
@@ -260,10 +351,7 @@ function AddClassForm({
 function ImgFormField({
   field,
 }: {
-  field: ControllerRenderProps<
-    AppearanceFormValues,
-    keyof AppearanceFormValues
-  >;
+  field: ControllerRenderProps<ClassFormValues, keyof ClassFormValues>;
 }) {
   if (typeof field.value !== 'string') {
     return <div>Error: field.value must be string for img form field</div>;
@@ -308,10 +396,7 @@ function MultipleCheckbox({
   field,
   options,
 }: {
-  field: ControllerRenderProps<
-    AppearanceFormValues,
-    keyof AppearanceFormValues
-  >;
+  field: ControllerRenderProps<ClassFormValues, keyof ClassFormValues>;
   options: OptionsType[];
 }) {
   const { value } = field;
@@ -350,10 +435,7 @@ function RadioGroupInput({
   field,
   options,
 }: {
-  field: ControllerRenderProps<
-    AppearanceFormValues,
-    keyof AppearanceFormValues
-  >;
+  field: ControllerRenderProps<ClassFormValues, keyof ClassFormValues>;
   options: OptionsType[];
 }) {
   if (typeof field.value !== 'string') {
@@ -368,7 +450,11 @@ function RadioGroupInput({
     >
       {options.map((option) => (
         <div key={option.value} className='flex items-center space-x-2'>
-          <RadioGroupItem value={option.value} id={option.value} />
+          <RadioGroupItem
+            value={option.value}
+            id={option.value}
+            disabled={option.status === 'disabled'}
+          />
           <Label htmlFor={option.value}>{option.label}</Label>
         </div>
       ))}
