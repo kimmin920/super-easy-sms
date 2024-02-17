@@ -33,14 +33,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import OpenAI from 'openai';
-import {
-  useActionData,
-  useLoaderData,
-  useNavigate,
-  useNavigation,
-  useSubmit,
-} from '@remix-run/react';
+import { useFetcher } from '@remix-run/react';
 import { Icons } from './Icons';
 
 const users = [
@@ -74,9 +67,7 @@ const users = [
 type User = (typeof users)[number];
 
 export function CardsChat() {
-  const data = useActionData();
-  const submit = useSubmit();
-  const navigation = useNavigation();
+  const fetcher = useFetcher({ key: 'talk-to-gpt' });
 
   const [open, setOpen] = React.useState(false);
   const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
@@ -89,20 +80,20 @@ export function CardsChat() {
   ]);
 
   React.useEffect(() => {
-    if (!data?.completion) {
+    if (!fetcher.data?.completion) {
       return;
     }
 
-    const newMessage = data.completion.choices[0].message.content;
+    const newMessage = fetcher.data.completion.choices[0].message.content;
 
     newMessage &&
       setMessages((prev) => [...prev, { role: 'agent', content: newMessage }]);
-  }, [data]);
+  }, [fetcher.data]);
 
   const [input, setInput] = React.useState('');
   const inputLength = input.trim().length;
 
-  const isGPTLoading = navigation.state === 'submitting';
+  const isGPTLoading = fetcher.state === 'submitting';
 
   return (
     <>
@@ -160,7 +151,7 @@ export function CardsChat() {
         </CardContent>
 
         <CardFooter>
-          <form
+          <fetcher.Form
             onSubmit={(event) => {
               event.preventDefault();
 
@@ -174,7 +165,10 @@ export function CardsChat() {
                 },
               ]);
 
-              submit(event.currentTarget, { method: 'POST', action: '' });
+              fetcher.submit(event.currentTarget, {
+                method: 'POST',
+                action: '',
+              });
               setInput('');
             }}
             className='flex w-full items-center space-x-2'
@@ -200,7 +194,7 @@ export function CardsChat() {
               )}
               <span className='sr-only'>Send</span>
             </Button>
-          </form>
+          </fetcher.Form>
         </CardFooter>
       </Card>
       <Dialog open={open} onOpenChange={setOpen}>

@@ -20,10 +20,6 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault();
     setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
   }
 
   async function login() {
@@ -39,7 +35,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       },
     });
 
-    console.log(data);
+    console.log(data, error);
   }
 
   return (

@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/sheet';
 import { useNavigate, useParams } from '@remix-run/react';
 import { CourseType } from '~/types/collection';
-import AddClassForm from './AddClassForm';
+import AddClassForm, { ClassFormValues } from './AddClassForm';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 type EditStudentSheetProps = {
@@ -42,11 +42,31 @@ export function EditClassSheet({ course }: EditStudentSheetProps) {
         </SheetHeader>
 
         <AddClassForm
-          defaultValues={course}
+          defaultValues={{
+            ...course,
+            time: parseCourseSchedule(course.scheduledDays),
+          }}
           courseId={course.id}
           actionType='update'
         />
       </SheetContent>
     </Sheet>
   );
+}
+
+function parseCourseSchedule(schedules: string[]) {
+  const result: ClassFormValues['time'] = schedules.map((string, idx) => {
+    const dayMatch = string.match(/#day:([A-Z]+)@/);
+    const startMatch = string.match(/@start:(\d{2}:\d{2})@/);
+    const endMatch = string.match(/@end:(\d{2}:\d{2})/);
+
+    return {
+      id: idx,
+      day: dayMatch ? dayMatch[1] : '',
+      startTime: startMatch ? startMatch[1] : '',
+      endTime: endMatch ? endMatch[1] : '',
+    } as unknown as ClassFormValues['time'];
+  });
+
+  return result;
 }

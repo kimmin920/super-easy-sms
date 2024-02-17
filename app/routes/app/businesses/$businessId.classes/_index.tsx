@@ -7,7 +7,7 @@ import AddButton from 'app/components/AddButton';
 import { ResponsiveDrawerDialog } from 'app/components/ResponsiveDrawerDialog';
 import AddClassForm from './_components/AddClassForm';
 import { ClassCard } from './_components/ClassCard';
-import { NavLink, Outlet, useLoaderData, useNavigate } from '@remix-run/react';
+import { NavLink, Outlet, useLoaderData } from '@remix-run/react';
 
 import {
   ActionFunctionArgs,
@@ -40,10 +40,21 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
     teacher,
     price,
     priceDescription,
-    scheduledDays,
     billingFrequency,
     classCount,
+    scheduleCount,
   } = values;
+
+  const schedules = Array.from(
+    { length: scheduleCount as unknown as number },
+    (x, i) => i
+  ).map((idx) => {
+    const day = values[`time.${idx}.day`];
+    const start = values[`time.${idx}.startTime`];
+    const end = values[`time.${idx}.endTime`];
+
+    return `#day:${day}@start:${start}@end:${end}`;
+  });
 
   if (_action === 'create') {
     const { data, error } = await supabase.from('classes').insert({
@@ -53,7 +64,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       teacher,
       price,
       priceDescription,
-      scheduledDays: scheduledDays,
+      scheduledDays: schedules,
       billingFrequency,
       classCount,
       business_id: businessId,
@@ -69,7 +80,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         teacher,
         price,
         priceDescription,
-        scheduledDays: scheduledDays,
+        scheduledDays: schedules,
         billingFrequency,
         classCount,
       })

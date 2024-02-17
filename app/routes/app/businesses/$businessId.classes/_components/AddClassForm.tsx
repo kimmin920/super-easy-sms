@@ -26,9 +26,10 @@ import { SAMPLE_CLASS_IMGS } from '~/constants/sampleImages';
 import DaySelect from './DaySelect';
 import { PlusCircledIcon } from '@radix-ui/react-icons';
 import { Trash2 } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
 
 interface FormDataType {
-  id: keyof AppearanceFormValues;
+  id: keyof ClassFormValues;
   label: string;
   defaultLabel: string | number;
   description?: string;
@@ -110,12 +111,12 @@ const CLASS_FORM_DATA: FormDataType[] = [
     type: 'fields',
     id: 'time',
   },
-  {
-    label: 'classCount',
-    defaultLabel: 'classCount...',
-    type: 'number',
-    id: 'classCount',
-  },
+  // {
+  //   label: 'classCount',
+  //   defaultLabel: 'classCount...',
+  //   type: 'number',
+  //   id: 'classCount',
+  // },
 ];
 
 const appearanceFormSchema = z.object({
@@ -133,7 +134,7 @@ const appearanceFormSchema = z.object({
     required_error: 'Please select a img or upload.',
   }),
   billingFrequency: z.enum(['MONTHLY', 'WEEKLY', 'DAILY']),
-  classCount: z.number(),
+  // classCount: z.number(),
   time: z.array(
     z.object({
       id: z.number(),
@@ -152,7 +153,7 @@ const appearanceFormSchema = z.object({
   ),
 });
 
-const DEFAULT_VALUES: Partial<AppearanceFormValues> = {
+const DEFAULT_VALUES: Partial<ClassFormValues> = {
   coverImgSrc: SAMPLE_CLASS_IMGS[0].imgSrc,
   name: '',
   description: '',
@@ -160,15 +161,15 @@ const DEFAULT_VALUES: Partial<AppearanceFormValues> = {
   price: 100,
   priceDescription: '',
   billingFrequency: 'MONTHLY',
-  classCount: 0,
+  // classCount: 0,
   time: [{ id: 1, day: 'MONDAY', startTime: '09:00', endTime: '12:00' }],
 };
 
-type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
+export type ClassFormValues = z.infer<typeof appearanceFormSchema>;
 
 interface AddClassFormProps extends React.ComponentProps<'form'> {
   actionType: 'create' | 'update';
-  defaultValues?: Partial<AppearanceFormValues>;
+  defaultValues?: Partial<ClassFormValues>;
   courseId?: number;
 }
 function AddClassForm({
@@ -181,7 +182,7 @@ function AddClassForm({
   const businessId = params.businessId;
   const navigation = useNavigation();
 
-  const form = useForm<AppearanceFormValues>({
+  const form = useForm<ClassFormValues>({
     resolver: zodResolver(appearanceFormSchema),
     defaultValues: defaultValues ?? DEFAULT_VALUES,
   });
@@ -193,8 +194,6 @@ function AddClassForm({
       minLength: 1,
     },
   });
-
-  console.log(fields);
 
   function numberTypeOverride(each: FormDataType) {
     return (
@@ -222,10 +221,28 @@ function AddClassForm({
                 if (field.name === 'time') {
                   return (
                     <>
+                      <Separator />
                       <div>
-                        <FormLabel>Day</FormLabel>
-                        <FormLabel>Time</FormLabel>
-                        <FormLabel>Action</FormLabel>
+                        {/* className='rounded-lg border p-3 bg-muted */}
+                        <input
+                          name='scheduleCount'
+                          hidden
+                          value={fields.length}
+                        />
+                        <FormLabel>수업 스케쥴</FormLabel>
+                        <p className='text-[0.8rem] text-muted-foreground'>
+                          수업 스케쥴을 추가하고 요일과 시작/끝 시간을
+                          설정하세요.
+                        </p>
+
+                        <div className='flex mt-2'>
+                          <span className='w-[82px] mr-1 text-xs'>Day</span>
+                          <span className='flex-1 mr-1 text-xs'>
+                            Start time
+                          </span>
+                          <span className='flex-1 mr-1 text-xs'>End time</span>
+                          <span className='w-[36px]'></span>
+                        </div>
 
                         {fields.map((innerField, index) => {
                           return (
@@ -278,6 +295,7 @@ function AddClassForm({
                           <span className='ml-1'>Add Day</span>
                         </Button>
                       </div>
+                      <Separator />
                     </>
                   );
                 }
@@ -333,10 +351,7 @@ function AddClassForm({
 function ImgFormField({
   field,
 }: {
-  field: ControllerRenderProps<
-    AppearanceFormValues,
-    keyof AppearanceFormValues
-  >;
+  field: ControllerRenderProps<ClassFormValues, keyof ClassFormValues>;
 }) {
   if (typeof field.value !== 'string') {
     return <div>Error: field.value must be string for img form field</div>;
@@ -381,10 +396,7 @@ function MultipleCheckbox({
   field,
   options,
 }: {
-  field: ControllerRenderProps<
-    AppearanceFormValues,
-    keyof AppearanceFormValues
-  >;
+  field: ControllerRenderProps<ClassFormValues, keyof ClassFormValues>;
   options: OptionsType[];
 }) {
   const { value } = field;
@@ -423,10 +435,7 @@ function RadioGroupInput({
   field,
   options,
 }: {
-  field: ControllerRenderProps<
-    AppearanceFormValues,
-    keyof AppearanceFormValues
-  >;
+  field: ControllerRenderProps<ClassFormValues, keyof ClassFormValues>;
   options: OptionsType[];
 }) {
   if (typeof field.value !== 'string') {
@@ -441,7 +450,11 @@ function RadioGroupInput({
     >
       {options.map((option) => (
         <div key={option.value} className='flex items-center space-x-2'>
-          <RadioGroupItem value={option.value} id={option.value} />
+          <RadioGroupItem
+            value={option.value}
+            id={option.value}
+            disabled={option.status === 'disabled'}
+          />
           <Label htmlFor={option.value}>{option.label}</Label>
         </div>
       ))}

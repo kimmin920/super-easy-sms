@@ -42,7 +42,7 @@ function DaySelect({
       <SelectContent>
         {DAYS.map((day) => (
           <SelectItem key={day} value={day}>
-            {day}
+            <div className='w-[40px] text-left'> {day.slice(0, 3)}</div>
           </SelectItem>
         ))}
       </SelectContent>
