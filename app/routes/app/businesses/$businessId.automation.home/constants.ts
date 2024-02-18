@@ -24,6 +24,14 @@ export const AUTOMATION_LIST = [
     status: 'active',
   },
   {
+    to: 'student-attendance',
+    title: 'student-attendance',
+    contentText: '학생 출결',
+    description: '요놈들이 땡땡이를 쳤나?',
+    icon: 'people',
+    status: 'active',
+  },
+  {
     to: 'generate-time-table',
     title: 'Time Table',
     contentText: '시간표',
@@ -47,13 +55,4 @@ export const AUTOMATION_LIST = [
     icon: 'chat',
     status: 'deactive',
   },
-  {
-    to: 'student-attendance',
-    title: 'student-attendance',
-    contentText: '학생 출결',
-    description: '요놈들이 땡땡이를 쳤나?',
-    icon: 'people',
-    status: 'deactive',
-  },
-  
 ];

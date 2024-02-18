@@ -1,14 +1,7 @@
-import {
-  NavLink,
-  Outlet,
-  useLocation,
-  useMatch,
-  useParams,
-} from '@remix-run/react';
+import { NavLink, useParams } from '@remix-run/react';
 import AutomationCard from '~/components/AutomationCard';
 import { AUTOMATION_LIST } from './constants';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 
 function Automation() {
   const params = useParams();

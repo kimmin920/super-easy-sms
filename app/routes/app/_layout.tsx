@@ -29,7 +29,7 @@ function AppLayout() {
   const context = useOutletContext();
 
   return (
-    <div className='app-layout h-full'>
+    <div className='app-layout h-screen md:h-full flex flex-col'>
       <Outlet context={context} />
     </div>
   );
