@@ -2,7 +2,7 @@ import { addDays, format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import koreaHolidaysJson from 'app/holidays/holidays.json';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { DateRange } from 'react-day-picker';
 import { HolidayCalendar } from '~/components/HolidayCalander';
 import { DatePickerWithRange } from '~/components/DatePickerWithRange';
@@ -36,11 +36,11 @@ import {
 } from '@/components/ui/tooltip';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { TooltipPortal } from '@radix-ui/react-tooltip';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { parseCourseSchedules } from '../$businessId.classes/_components/EditClassSheet';
 
-interface NonNullableDateRande {
-  from: NonNullable<DateRange['from']>;
-  to: NonNullable<DateRange['to']>;
-}
+
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const businessId = params.businessId;
@@ -110,35 +110,43 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
 const nationalHolidays = koreaHolidaysJson.all;
 
+const BILLING_METHODS = [
+  {id: 'RANGE', name: '기간별 고정금액'}, {id: 'PER_CLASS', name: '회차별 금액'}
+]
+
 function SuperEasySms() {
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const { students, templates } = useLoaderData<typeof loader>();
 
-  const [date, setDate] = React.useState<NonNullableDateRande>({
+  const [date, setDate] = React.useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 20),
   });
 
+  const [billingMethod, setBillingMethod] = useState<'RANGE'|'PER_CLASS'>('RANGE');
   const [holidays, setHolidays] = React.useState<Date[]>([]);
 
   function insertNationalHolidays() {
+    if (!date?.from || !date.to) {
+      return;
+    }
+
     const holidaysAsDates = nationalHolidays.map(
       (holiday) => new Date(holiday)
     );
 
     const filteredHolidays = holidaysAsDates.filter(
-      (holiday) => holiday >= date.from && holiday <= date.to
+      (holiday) => holiday >= date.from! && holiday <= date.to!
     );
 
     setHolidays((prev) => {
-      // Filter out any holidays that are already in the prev state
       const newHolidays = filteredHolidays.filter(
         (newHoliday) =>
           !prev.some(
             (prevHoliday) => prevHoliday.getTime() === newHoliday.getTime()
           )
       );
-      console.log('new-holidays', newHolidays);
+
       return prev.concat(newHolidays);
     });
   }
@@ -146,11 +154,12 @@ function SuperEasySms() {
   const [selectedTemplateId, setSelectedTemplateId] = React.useState<
     number | null
   >(null);
+
   const selectedTemplate = templates.find(
     (each) => each.id === selectedTemplateId
   );
 
-  const workingDates = getDatesBetween(date, holidays);
+  const workingDates =  date ? getDatesBetween(date, holidays) : []
 
   function onClickTemplate(id: number) {
     setSelectedTemplateId(id);
@@ -166,10 +175,10 @@ function SuperEasySms() {
             })
             .toUpperCase() as DayInString;
 
-          return eachClass.scheduledDays.includes(day);
+          return parseCourseSchedules(eachClass.scheduledDays).some(schedule => schedule.day === day);
         });
 
-        const pricePerClass = eachClass.price / eachClass.classCount;
+        const pricePerClass = eachClass.scheduledDays.length > 0 ? eachClass.price / eachClass.scheduledDays.length : 0
 
         return {
           ...eachClass,
@@ -184,6 +193,10 @@ function SuperEasySms() {
         return acc;
       }
 
+      if (billingMethod === 'RANGE') {
+        return acc + cur.price;
+      }
+
       return acc + cur.priceOfCounts;
     }, 0);
 
@@ -193,8 +206,8 @@ function SuperEasySms() {
 
     const message = templateMessageInjector(template?.content, {
       학생이름: student.name,
-      정산시작일: format(date.from, 'PPP', { locale: ko }),
-      정산종료일: format(date.to, 'PPP', { locale: ko }),
+      정산시작일: date?.from ? format(date.from, 'PPP', { locale: ko }): 'N/A',
+      정산종료일: date?.to ? format(date.to, 'PPP', { locale: ko }): 'N/A',
       정산금액: new Intl.NumberFormat('ko-KR', {
         style: 'currency',
         currency: 'KRW',
@@ -217,6 +230,7 @@ function SuperEasySms() {
           <h2 className='text-2xl font-bold tracking-tight'>Students</h2>
           <p className='text-muted-foreground'>정산 / 문자템플릿 / SMS</p>
         </div>
+
         <div className='flex items-center space-x-2'>
           <ResponsiveDrawerDialog
             title='Settings'
@@ -240,6 +254,25 @@ function SuperEasySms() {
                 </div>
 
                 <div className='flex flex-col'>
+                  <Label>정산 방식</Label>
+                  <Select
+                    onValueChange={setBillingMethod}
+                    defaultValue={billingMethod}
+                  >
+                    <SelectTrigger className='mt-2'>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {BILLING_METHODS.map((method) => (
+                        <SelectItem key={method.id} value={method.id}>
+                          <div className='text-left'> {method.name}</div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {billingMethod === 'PER_CLASS' && <div className='flex flex-col'>
                   <div className='flex items-center justify-between'>
                     휴일 (정산 제외일)
                     <TooltipProvider>
@@ -262,15 +295,15 @@ function SuperEasySms() {
                       </Tooltip>
                     </TooltipProvider>
                   </div>
-                  <HolidayCalendar
+                   <HolidayCalendar
                     className='mt-2'
                     numberOfMonths={isDesktop ? 2 : 1}
                     holidayDates={holidays}
                     setHolidayDates={setHolidays}
-                    fromDate={date.from}
-                    toDate={date.to}
+                    fromDate={date?.from}
+                    toDate={date?.to}
                   />
-                </div>
+                </div>}
 
                 <div className='flex flex-col'>
                   <Label>문자 템플릿</Label>

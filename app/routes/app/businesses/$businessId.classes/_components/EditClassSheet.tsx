@@ -44,7 +44,7 @@ export function EditClassSheet({ course }: EditStudentSheetProps) {
         <AddClassForm
           defaultValues={{
             ...course,
-            time: parseCourseSchedule(course.scheduledDays),
+            time: parseCourseSchedules(course.scheduledDays),
           }}
           courseId={course.id}
           actionType='update'
@@ -54,7 +54,7 @@ export function EditClassSheet({ course }: EditStudentSheetProps) {
   );
 }
 
-function parseCourseSchedule(schedules: string[]) {
+export function parseCourseSchedules(schedules: string[]) {
   const result: ClassFormValues['time'] = schedules.map((string, idx) => {
     const dayMatch = string.match(/#day:([A-Z]+)@/);
     const startMatch = string.match(/@start:(\d{2}:\d{2})@/);
