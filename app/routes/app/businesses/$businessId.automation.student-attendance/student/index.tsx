@@ -11,7 +11,6 @@ import { sendOneMessage } from '~/services/solapi.server';
 
 export const loader: LoaderFunction = async ({ params }) => {
   const businessId = params.businessId;
-  console.log('called loader agagin.');
 
   if (!businessId) {
     return redirect('/404');
@@ -109,8 +108,6 @@ function StudentAttendanceStudentPage() {
         setInputValue={setInputValue}
         onChangeDigits={onChangeDigits}
       />
-
-      {/* <UserItem id={1} name={'김나은'} caption='hell' /> */}
     </div>
   );
 }

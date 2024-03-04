@@ -14,7 +14,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const { data, error } = await supabaseClient.auth.getUser();
 
   if (error) {
-    console.error('get user error', error);
     return redirect('/auth');
   }
 
@@ -29,7 +28,7 @@ function AppLayout() {
   const context = useOutletContext();
 
   return (
-    <div className='app-layout h-screen md:h-full flex flex-col'>
+    <div className='app-layout h-screen flex flex-col'>
       <Outlet context={context} />
     </div>
   );

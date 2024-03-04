@@ -1,4 +1,4 @@
-import coolsms from 'coolsms-node-sdk';
+import coolsms, { GetMessagesResponse, Message } from 'coolsms-node-sdk';
 
 type CoolsmsMessageService = typeof coolsms;
 
@@ -19,6 +19,12 @@ export async function sendOneMessage({ from, to, text }: Props) {
     from,
     text: text,
   });
+
+  return data;
+}
+
+export async function getMessages(): Promise<GetMessagesResponse> {
+  const data = await messageService.getMessages();
 
   return data;
 }

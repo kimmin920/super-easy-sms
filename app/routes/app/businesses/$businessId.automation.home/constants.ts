@@ -24,7 +24,7 @@ export const AUTOMATION_LIST = [
     status: 'active',
   },
   {
-    to: 'student-attendance',
+    to: 'student-attendance/home',
     title: 'student-attendance',
     contentText: '학생 출결',
     description: '요놈들이 땡땡이를 쳤나?',
