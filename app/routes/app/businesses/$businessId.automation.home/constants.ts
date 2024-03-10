@@ -29,10 +29,10 @@ export const AUTOMATION_LIST = [
     contentText: '학생 출결',
     description: '요놈들이 땡땡이를 쳤나?',
     icon: 'people',
-    status: 'active',
+    status: 'deactive',
   },
   {
-    to: 'generate-time-table',
+    to: 'students-time-table',
     title: 'Time Table',
     contentText: '시간표',
     description: '아름다운 시간표 자동생성기',

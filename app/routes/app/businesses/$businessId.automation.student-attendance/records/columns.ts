@@ -35,7 +35,7 @@ export const columns: ColumnDef<Message>[] = [
     cell: ({ cell }) => {
       const createdAt = cell.getValue();
 
-      return format(createdAt, 'yyyy-MM-dd hh:mm a');
+      return format(createdAt, 'MM-dd hh:mm a');
     },
   },
   {
