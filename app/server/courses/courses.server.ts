@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '~/types/supabase';
 
-export async function getAllCourses({ businessId }: { businessId: number }) {
+export async function getAllCourses({ businessId }: { businessId: string }) {
   const supabase = createClient<Database>(
     process.env.SUPABASE_URL!,
     process.env.SUPABASE_ANON_KEY!
@@ -12,5 +12,5 @@ export async function getAllCourses({ businessId }: { businessId: number }) {
     .select()
     .eq('business_id', businessId);
 
-  return { courses: data };
+  return { courses: data ?? [], error };
 }
