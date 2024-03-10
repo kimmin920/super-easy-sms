@@ -15,8 +15,8 @@ import {
 } from '@/components/ui/popover';
 
 interface DatePickerWithRange extends React.HTMLAttributes<HTMLDivElement> {
-  date: DateRange;
-  setDate: (date: DateRange) => void;
+  date: DateRange | undefined;
+  setDate: (date: DateRange | undefined) => void;
 }
 export function DatePickerWithRange({
   date,
@@ -56,7 +56,10 @@ export function DatePickerWithRange({
             mode='range'
             defaultMonth={date?.from}
             selected={date}
-            onSelect={setDate}
+            onSelect={(date) => {
+              console.log(date);
+              setDate(date)
+            }}
             numberOfMonths={2}
           />
         </PopoverContent>

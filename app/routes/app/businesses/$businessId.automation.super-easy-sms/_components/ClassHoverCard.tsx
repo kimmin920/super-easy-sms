@@ -11,6 +11,7 @@ import {
 import { ClassesWithPayment } from './StudentsDataTable';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
+import { parseCourseSchedules } from '../../$businessId.classes/_components/EditClassSheet';
 
 interface Props {
   classWithPayment: ClassesWithPayment;
@@ -26,6 +27,7 @@ export function ClassHoverCard({ classWithPayment }: Props) {
     coverImgSrc,
     classCount,
     created_at,
+    scheduledDays
   } = classWithPayment;
 
   const pricePerClass = price / classCount;
@@ -45,6 +47,8 @@ export function ClassHoverCard({ classWithPayment }: Props) {
           <div className='space-y-1'>
             <h4 className='text-sm font-semibold'>{name}</h4>
             <p className='text-sm'>수업 횟수: {activeClassDates.length}</p>
+            <p className='text-sm'>수업 요일: {parseCourseSchedules(scheduledDays).map(each => each.day).join(', ')}</p>
+           
             <p className='text-sm'>
               수업 날짜:
               <ol className='list-inside list-decimal'>
@@ -77,7 +81,7 @@ export function ClassHoverCard({ classWithPayment }: Props) {
 }
 
 const formatDateList = (dates: Date[]) => {
-  const formattedDates = dates.map((date) => format(date, 'MMM dd'));
+  const formattedDates = dates.map((date) => format(date, 'MMM dd, EEE'));
   return formattedDates;
 };
 
