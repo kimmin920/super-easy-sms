@@ -1,8 +1,7 @@
 import { ActionFunctionArgs, redirect } from "@remix-run/node";
-import StudentDataSheet from "./components/DataGrid"
+import ClassDataSheet from "./components/ClassDataSheet"
 import { createServerClient } from "@supabase/auth-helpers-remix";
 import { Database } from "~/types/supabase";
-import { useSubmit } from "@remix-run/react";
 
 export async function action({ request, params }: ActionFunctionArgs) {
   const response = new Response();
@@ -27,21 +26,20 @@ export async function action({ request, params }: ActionFunctionArgs) {
   }
 
   const { data, error } = await supabaseClient
-    .from('students')
+    .from('classes')
     .insert(studentsData);
 
-    console.log(data, error)
   if (error) {
     return redirect('/500');
   }
 
-  return redirect(`/app/businesses/${params.businessId}/students`);
+  return redirect(`/app/businesses/${params.businessId}/classes`);
 }
 
 function ExcelImportPage() {
   return (
     <div className="h-screen overflow-scroll">
-      <StudentDataSheet  />
+      <ClassDataSheet  />
     </div>
   )
 }

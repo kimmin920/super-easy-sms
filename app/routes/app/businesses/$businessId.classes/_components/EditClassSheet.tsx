@@ -53,7 +53,8 @@ export function EditClassSheet({ course }: EditStudentSheetProps) {
   );
 }
 
-function parseCourseSchedules(schedules: string[]) {
+
+export function parseCourseSchedules(schedules: string[]) {
   const result: ClassFormValues['time'] = schedules.map((string, idx) => {
     const { day, startTime, endTime } = parseCourseSchedule(string);
 

@@ -137,7 +137,6 @@ const appearanceFormSchema = z.object({
   // classCount: z.number(),
   time: z.array(
     z.object({
-      id: z.number(),
       day: z.enum([
         'MONDAY',
         'TUESDAY',
@@ -162,7 +161,7 @@ const DEFAULT_VALUES: Partial<ClassFormValues> = {
   priceDescription: '',
   billingFrequency: 'MONTHLY',
   // classCount: 0,
-  time: [{ id: 1, day: 'MONDAY', startTime: '09:00', endTime: '12:00' }],
+  time: [{ day: 'MONDAY', startTime: '09:00', endTime: '12:00' }],
 };
 
 export type ClassFormValues = z.infer<typeof appearanceFormSchema>;
@@ -203,6 +202,16 @@ function AddClassForm({
 
   const isSubmitLoading =
     navigation.state === 'submitting' || navigation.state === 'loading';
+    
+
+    function onClickAddDay() {
+      append({
+        day: 'MONDAY',
+        startTime: '09:00',
+        endTime: '12:00',
+      })
+    }
+    
   return (
     <Form {...form}>
       <RemixForm
@@ -249,10 +258,11 @@ function AddClassForm({
                             <Fragment key={innerField.id}>
                               <div className='flex mt-2'>
                                 <DaySelect
-                                  {...form.register(`time.${index}.day`)}
                                   defaultValue={innerField.day}
-                                  onValueChange={field.onChange}
+                                  // onValueChange={field.onChange}
                                   className='flex-1 mr-1 text-sm'
+                                  {...form.register(`time.${index}.day`)}
+                                  onValueChange={form.register(`time.${index}.day`).onChange}
                                 />
                                 <Input
                                   className='mr-1 focus-visible:ring-1 focus-visible:ring-offset-0'
@@ -282,14 +292,7 @@ function AddClassForm({
                           type='button'
                           className='mr-auto mt-2'
                           variant='outline'
-                          onClick={() =>
-                            append({
-                              id: fields.length,
-                              day: 'MONDAY',
-                              startTime: '09:00',
-                              endTime: '12:00',
-                            })
-                          }
+                          onClick={onClickAddDay}
                         >
                           <PlusCircledIcon width={20} height={20} />
                           <span className='ml-1'>Add Day</span>
