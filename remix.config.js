@@ -12,4 +12,5 @@ export default {
   routes: async (defineRoutes) => {
     return flatRoutes('routes', defineRoutes);
   },
+  serverDependenciesToBundle: [''],
 };
