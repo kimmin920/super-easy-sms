@@ -1,78 +1,72 @@
 import { Outlet, useLoaderData } from '@remix-run/react';
 import { StudentInDatagrid } from './_components/DataGrid';
 
-import { StudentClassMapType, StudentWithCourse } from '~/types/collection';
+import { StudentClassMapType } from '~/types/collection';
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '~/types/supabase';
-import StudentsDataTable from './_components/StudentsDataTable';
+// import StudentsDataTable from './_components/StudentsDataTable';
 import { AddStudentSheet } from './_components/AddStudentSheet';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
   redirect,
 } from '@remix-run/node';
-import { createServerClient } from '@supabase/auth-helpers-remix';
+import {
+  deleteOneStudent,
+  getManyStudents,
+} from '~/server/students/students.server';
+import { getStudentsSearchParams } from '~/helper/students.helper';
+import { getAllCourses } from '~/server/courses/courses.server';
+import StudentsDataTable from '~/components/students/StudentsTable';
+import { basicAction } from '~/components/students/StudentsDataTableColumns';
 
-export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const businessId = params.businessId;
 
   if (!businessId) {
     return redirect('/404');
   }
 
-  const supabase = createClient<Database>(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!
-  );
+  const { start, end, name } = getStudentsSearchParams(request.url);
 
-  const { data: students, error: studentsError } = await supabase
-    .from('students')
-    .select(`*, courses: classes(*), courseIds: classes(id)`)
-    .eq('business_id', businessId);
+  const { students, error: studentsError } = await getManyStudents({
+    businessId,
+    range: { start: Number(start), end: Number(end) },
+    parmas: {
+      name,
+    },
+  });
 
-  const { data: classes, error: classesError } = await supabase
-    .from('classes')
-    .select('*')
-    .eq('business_id', businessId);
+  const { courses, error: coursesError } = await getAllCourses({ businessId });
 
-  const formattedStudents: StudentWithCourse[] =
-    students?.map((student) => ({
-      ...student,
-      courseIds: student.courseIds.map((each) => each.id),
-    })) ?? [];
+  if (studentsError || coursesError) {
+    return redirect('/500');
+  }
 
   return {
-    students: formattedStudents,
-    classes: classes ?? [],
-    studentsError,
-    classesError,
+    students,
+    courses,
   };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const response = new Response();
-
-  const supabaseClient = createServerClient<Database>(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!,
-    { request, response }
-  );
-
   const body = await request.formData();
+
   const { _action, ...values } = Object.fromEntries(body);
 
   if (_action === 'delete') {
-    const { data, error } = await supabaseClient
-      .from('students')
-      .delete()
-      .eq('id', values.id);
+    const { status, error } = await deleteOneStudent(values.id);
+
+    if (error) {
+      return redirect(`/${status}`);
+    }
   }
 
   return null;
 };
 
 function StudentsLayout() {
-  const { students, classes } = useLoaderData<typeof loader>();
+  const { students, courses } = useLoaderData<typeof loader>();
 
   return (
     <>
@@ -84,17 +78,12 @@ function StudentsLayout() {
           </p>
         </div>
         <div className='flex items-center space-x-2'>
-          <AddStudentSheet courses={classes} />
+          <AddStudentSheet courses={courses} />
         </div>
       </div>
-      <StudentsDataTable data={students} />
+      <StudentsDataTable data={students} actionColumn={basicAction} />
       <Outlet />
     </>
-    // <DataGrid
-    //   students={students}
-    //   courses={classes}
-    //   updateData={handleUpdateData}
-    // />
   );
 }
 
