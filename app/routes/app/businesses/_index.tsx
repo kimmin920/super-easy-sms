@@ -4,6 +4,7 @@ import {
   NavLink,
   Outlet,
   useLoaderData,
+  useNavigation,
   useParams,
 } from '@remix-run/react';
 
@@ -84,6 +85,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 function BuisinessRoute() {
   const { businesses, user } = useLoaderData<typeof loader>();
   const [createBusinessOpen, setCreateBusinessOpen] = useState(false);
+  const { state } = useNavigation();
 
   const params = useParams();
 
@@ -126,7 +128,11 @@ function BuisinessRoute() {
                   className='flex flex-col items-start w-full md:w-[350px]'
                 >
                   <CreateBusinessForm />
-                  <Button className='mt-6 w-full' type='submit'>
+                  <Button
+                    className='mt-6 w-full'
+                    type='submit'
+                    disabled={state === 'loading' || state === 'submitting'}
+                  >
                     Create ✈️
                   </Button>
                 </Form>
