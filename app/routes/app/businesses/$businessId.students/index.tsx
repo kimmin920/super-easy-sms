@@ -4,7 +4,6 @@ import { StudentInDatagrid } from './_components/DataGrid';
 import { StudentClassMapType } from '~/types/collection';
 import { createClient } from '@supabase/supabase-js';
 import { Database } from '~/types/supabase';
-// import StudentsDataTable from './_components/StudentsDataTable';
 import { AddStudentSheet } from './_components/AddStudentSheet';
 import {
   ActionFunctionArgs,
@@ -18,7 +17,7 @@ import {
 import { getStudentsSearchParams } from '~/helper/students.helper';
 import { getAllCourses } from '~/server/courses/courses.server';
 import StudentsDataTable from '~/components/students/StudentsTable';
-import { basicAction } from '~/components/students/StudentsDataTableColumns';
+import { editAndDeleteStudentColumn } from '~/components/students/StudentsDataTableColumns';
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const businessId = params.businessId;
@@ -81,7 +80,10 @@ function StudentsLayout() {
           <AddStudentSheet courses={courses} />
         </div>
       </div>
-      <StudentsDataTable data={students} actionColumn={basicAction} />
+      <StudentsDataTable
+        data={students}
+        extraColumns={[editAndDeleteStudentColumn]}
+      />
       <Outlet />
     </>
   );

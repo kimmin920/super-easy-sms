@@ -22,7 +22,7 @@ import {
   DrawerTrigger,
 } from '@/components/ui/drawer';
 
-interface ResponsiveDrawerDialogProps {
+interface ResponsiveDrawerDialogButtonProps {
   button: React.ReactNode;
   form: React.ReactNode;
   title: string;
@@ -30,13 +30,13 @@ interface ResponsiveDrawerDialogProps {
   closeText?: string;
 }
 
-export function ResponsiveDrawerDialog({
+export function ResponsiveDrawerDialogButton({
   button,
   form,
   title,
   description,
   closeText,
-}: ResponsiveDrawerDialogProps) {
+}: ResponsiveDrawerDialogButtonProps) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
@@ -78,6 +78,54 @@ export function ResponsiveDrawerDialog({
             <Button variant='outline'>{closeText ?? 'Cancel'}</Button>
           </DrawerClose>
         </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  );
+}
+
+interface ResponsiveDrawerDialogProps {
+  content: React.ReactNode;
+  title: string;
+  description: string;
+  footer?: React.ReactNode;
+  isOpen: boolean;
+  onOpenChange: (value: boolean) => void;
+}
+
+export function ResponsiveDrawerDialog({
+  isOpen,
+  content,
+  title,
+  description,
+  footer,
+  onOpenChange,
+}: ResponsiveDrawerDialogProps) {
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+
+  if (isDesktop) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onOpenChange} modal>
+        <DialogContent className='w-fit max-w-fit overflow-y-scroll max-h-[calc(100vh-2rem)]'>
+          <DialogHeader>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>{description}</DialogDescription>
+          </DialogHeader>
+          {content}
+          {footer && <DialogFooter>{footer}</DialogFooter>}
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return (
+    <Drawer open={isOpen} onOpenChange={onOpenChange}>
+      <DrawerContent>
+        <DrawerHeader className='text-left'>
+          <DrawerTitle>{title}</DrawerTitle>
+          <DrawerDescription>{description}</DrawerDescription>
+        </DrawerHeader>
+        <div className='px-4 max-h-96 overflow-y-auto'>{content}</div>
+        {footer && <DrawerFooter className='pt-2'>{footer}</DrawerFooter>}
       </DrawerContent>
     </Drawer>
   );

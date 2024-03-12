@@ -93,7 +93,7 @@ export const StudentsDataTableColumns: ColumnDef<StudentWithCourse>[] = [
   },
 ];
 
-export const basicAction: ColumnDef<StudentWithCourse> = {
+export const editAndDeleteStudentColumn: ColumnDef<StudentWithCourse> = {
   id: 'actions',
   enableHiding: false,
   cell: ({ row, onClickEdit, onClickDelete }) => {

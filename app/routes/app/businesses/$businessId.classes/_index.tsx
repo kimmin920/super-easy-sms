@@ -4,7 +4,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import AddButton from 'app/components/AddButton';
 
-import { ResponsiveDrawerDialog } from 'app/components/ResponsiveDrawerDialog';
+import { ResponsiveDrawerDialogButton } from 'app/components/ResponsiveDrawerDialog';
 import AddClassForm from './_components/AddClassForm';
 import { ClassCard } from './_components/ClassCard';
 import { NavLink, Outlet, useLoaderData } from '@remix-run/react';
@@ -124,7 +124,7 @@ function ClassesLayout() {
               <TabsTrigger value='analytics'>Deactive</TabsTrigger>
             </TabsList>
             <div className='ml-auto'>
-              <ResponsiveDrawerDialog
+              <ResponsiveDrawerDialogButton
                 button={<AddButton label='Add class' />}
                 form={<AddClassForm actionType='create' />}
                 title={'Add class'}

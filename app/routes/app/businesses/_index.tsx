@@ -27,7 +27,7 @@ import { Card } from '@/components/ui/card';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { Separator } from '@/components/ui/separator';
-import { ResponsiveDrawerDialog } from '~/components/ResponsiveDrawerDialog';
+import { ResponsiveDrawerDialogButton } from '~/components/ResponsiveDrawerDialog';
 
 export interface businessOutletContextType {
   selectedBusinessId: string;
@@ -107,7 +107,7 @@ function BuisinessRoute() {
               </p>
             </div>
 
-            <ResponsiveDrawerDialog
+            <ResponsiveDrawerDialogButton
               title={'학원 생성하기 ✨'}
               description=''
               button={

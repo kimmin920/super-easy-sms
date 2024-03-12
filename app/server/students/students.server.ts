@@ -1,9 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
-import { StudentWithCourse } from '~/types/collection';
+import { BusinessIdType, StudentWithCourse } from '~/types/collection';
 import { Database } from '~/types/supabase';
 
 type StudentsServerArgType = {
-  businessId: string;
+  businessId: BusinessIdType;
   range: {
     start: number;
     end: number;

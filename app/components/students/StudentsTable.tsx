@@ -32,17 +32,17 @@ import { StudentWithCourse } from '~/types/collection';
 import { StudentsDataTableColumns } from './StudentsDataTableColumns';
 import { useNavigate } from '@remix-run/react';
 
-export interface StudentsDataTableProps {
-  data: StudentWithCourse[];
+export interface StudentsDataTableProps<T> {
+  data: Array<StudentWithCourse & T>;
   defaultColumnVisibility?: VisibilityState;
-  actionColumn?: ColumnDef<StudentWithCourse>;
+  extraColumns?: ColumnDef<StudentWithCourse>[];
 }
 
-function StudentsDataTable({
+function StudentsDataTable<T>({
   data,
   defaultColumnVisibility,
-  actionColumn,
-}: StudentsDataTableProps) {
+  extraColumns,
+}: StudentsDataTableProps<T>) {
   const navigate = useNavigate();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -53,8 +53,8 @@ function StudentsDataTable({
 
   const table = useReactTable({
     data,
-    columns: actionColumn
-      ? StudentsDataTableColumns.concat([actionColumn])
+    columns: extraColumns
+      ? StudentsDataTableColumns.concat(extraColumns)
       : StudentsDataTableColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import { BusinessIdType } from '~/types/collection';
 import { Database } from '~/types/supabase';
 
-export async function getAllCourses({
+export async function getAllTemplates({
   businessId,
 }: {
   businessId: BusinessIdType;
@@ -13,9 +13,9 @@ export async function getAllCourses({
   );
 
   const { data, error } = await supabase
-    .from('classes')
-    .select()
+    .from('sms_templates')
+    .select('*')
     .eq('business_id', businessId);
 
-  return { courses: data ?? [], error };
+  return { templates: data, error };
 }

@@ -13,7 +13,7 @@ import {
 } from '~/services/businesses.server';
 import { getUser } from '~/services/auth.server';
 import { Button } from '@/components/ui/button';
-import { ResponsiveDrawerDialog } from '~/components/ResponsiveDrawerDialog';
+import { ResponsiveDrawerDialogButton } from '~/components/ResponsiveDrawerDialog';
 import DeleteBusinessForm from './DeleteBusinessForm';
 
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
@@ -90,7 +90,7 @@ function Business() {
         이 비즈니스와 관계된 모든 데이터는 사라지며 복구되지 않습니다
       </p>
 
-      <ResponsiveDrawerDialog
+      <ResponsiveDrawerDialogButton
         button={
           <Button variant='destructive' type='button'>
             Delete Business

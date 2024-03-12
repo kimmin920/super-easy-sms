@@ -1,6 +1,9 @@
 import { Database } from './supabase';
 import type { User } from '@supabase/gotrue-js/src/lib/types';
 
+export type BusinessIdType =
+  Database['public']['Tables']['businesses']['Row']['id'];
+
 export type CourseType = Database['public']['Tables']['classes']['Row'];
 
 export type StudentType = Database['public']['Tables']['students']['Row'];
