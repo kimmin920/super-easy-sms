@@ -2,18 +2,25 @@ import { Form as FormProvider, FormField } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitErrorHandler, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import NormalInputFormItem from '../formItems/NormalFormItem';
+import NormalInputFormItem from '../formItems/InputFormItem';
 import { phoneNumberRegex } from '~/constants/regex';
 import TextAreaFormItem from '../formItems/TextAreaFormItem';
 import RadioFormItem, { RadioOption } from '../formItems/RadioFormItem';
 import { Button } from '@/components/ui/button';
+import SelectFormItem, { SelectOption } from '../formItems/SelectFormItem';
+
+// export const DEFAULT_STUDENT: Partial<StudentFormType> = {
+//   email: '',
+//   name: '',
+//   phoneNumber: '',
+// };
 
 const StudentFormSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }).min(5),
   name: z.string().min(1),
   phoneNumber: z.string().regex(phoneNumberRegex, 'Invalid PhoneNumber'),
   birthday: z.date({ coerce: true }),
-  courseIds: z.array(z.number()).optional(),
+  courseIds: z.array(z.string()).optional(),
   notificationType: z.enum(['Email', 'SMS', 'Kakao']),
   school: z.string().max(50).optional(),
   note1: z.string().max(200).optional(),
@@ -41,11 +48,16 @@ export const NOTIFICATION_OPTIONS: RadioOption[] = [
 export type StudentFormType = z.infer<typeof StudentFormSchema>;
 
 export type StudentFormProps = {
-  defaultValues: StudentFormType;
+  defaultValues: Partial<StudentFormType>;
+  courseOptions: SelectOption[];
   onSubmit: SubmitHandler<StudentFormType>;
 };
 
-function StudentForm({ defaultValues, onSubmit }: StudentFormProps) {
+function StudentForm({
+  defaultValues,
+  courseOptions,
+  onSubmit,
+}: StudentFormProps) {
   const form = useForm<StudentFormType>({
     resolver: zodResolver(StudentFormSchema),
     defaultValues,
@@ -90,6 +102,19 @@ function StudentForm({ defaultValues, onSubmit }: StudentFormProps) {
           control={form.control}
           render={({ field }) => (
             <NormalInputFormItem {...field} type='text' aria-label='전화번호' />
+          )}
+        />
+
+        <FormField
+          name='courseIds'
+          control={form.control}
+          render={({ field }) => (
+            <SelectFormItem
+              {...field}
+              aria-label='수업'
+              aria-placeholder='수업을 선택하세요'
+              options={courseOptions}
+            />
           )}
         />
 
