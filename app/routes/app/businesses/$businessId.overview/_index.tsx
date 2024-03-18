@@ -1,3 +1,5 @@
+import StudentForm from '~/components/students/StudentForm';
+
 function Overview() {
   return (
     <>
@@ -8,6 +10,18 @@ function Overview() {
           페이지로 업데이트 될 예정입니다.
         </p>
       </div>
+
+      {/* TEST for EDIT */}
+      <StudentForm
+        defaultValues={{
+          name: '김민우',
+          email: 'aa@aa.com',
+          phoneNumber: '01097690373',
+          notificationType: 'SMS',
+          birthday: new Date('1992-09-20'),
+        }}
+        onSubmit={console.log}
+      />
     </>
   );
 }
