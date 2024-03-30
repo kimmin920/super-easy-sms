@@ -63,7 +63,7 @@ export const SuperEasySmsColumns: ColumnDef<StudentWithCourse>[] = [
       return (
         <div className='text-right font-medium'>
           <a
-            href={`sms:${row.getValue('phoneNumber')}&body=${row.getValue(
+            href={`sms:${row.getValue('phone_number')}&body=${row.getValue(
               'message'
             )}`}
           >

@@ -1,56 +1,30 @@
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 import { Form as RemixForm, useNavigation } from '@remix-run/react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Sheet,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { zodResolver } from '@hookform/resolvers/zod';
+
 import { useNavigate, useParams } from '@remix-run/react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import CoursesCombobox from '~/components/CoursesCombobox';
-import { CourseType, StudentWithCourse } from '~/types/collection';
+
+import { CourseType } from '~/types/collection';
+import StudentForm, {
+  StudentFormType,
+} from '~/components/students/StudentForm';
 
 type EditStudentSheetProps = {
-  student: StudentWithCourse;
+  student: StudentFormType;
   courses: CourseType[];
 };
-
-const FormSchema = z.object({
-  email: z.string(),
-  name: z.string(),
-  phoneNumber: z.string(),
-  courseIds: z.array(z.number()),
-});
 
 export function EditStudentSheet({ student, courses }: EditStudentSheetProps) {
   const navigation = useNavigation();
   const navigate = useNavigate();
   const param = useParams();
   const businessId = param.businessId;
-
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      courseIds: student.courseIds ?? [],
-      name: student.name ?? '',
-      phoneNumber: student.phoneNumber ?? '',
-      email: student.email ?? '',
-    },
-  });
+  const studentId = param.studentId;
 
   function onOpenChange(isOpen: boolean) {
     if (!isOpen) {
@@ -62,7 +36,10 @@ export function EditStudentSheet({ student, courses }: EditStudentSheetProps) {
 
   return (
     <Sheet defaultOpen onOpenChange={onOpenChange}>
-      <SheetContent onInteractOutside={(e) => e.preventDefault()}>
+      <SheetContent
+        className='overflow-scroll'
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <SheetHeader>
           <SheetTitle>Edit Student</SheetTitle>
           <SheetDescription>
@@ -70,12 +47,19 @@ export function EditStudentSheet({ student, courses }: EditStudentSheetProps) {
           </SheetDescription>
         </SheetHeader>
 
-        <Form {...form}>
-          <RemixForm
-            method='post'
-            action={`/action/edit-student-with-course?businessId=${businessId}`}
-          >
-            <input name='id' value={student.id} hidden />
+        <RemixForm
+          method='POST'
+          className='space-y-3'
+          action={`/action/edit-student-with-course?businessId=${businessId}&studentId=${studentId}`}
+        >
+          <StudentForm
+            defaultValues={student}
+            courseOptions={courses.map((course) => ({
+              label: course.name!,
+              value: course.id.toString()!,
+            }))}
+          />
+          {/* <input name='id' value={student.id} hidden />
             <div className='grid gap-4 py-4'>
               <div className='grid grid-cols-4 items-center gap-4'>
                 <Label htmlFor='name' className='text-right'>
@@ -99,11 +83,11 @@ export function EditStudentSheet({ student, courses }: EditStudentSheetProps) {
               </div>
 
               <div className='grid grid-cols-4 items-center gap-4'>
-                <Label htmlFor='phoneNumber' className='text-right'>
+                <Label htmlFor='phone_number' className='text-right'>
                   Phone
                 </Label>
                 <Input
-                  {...form.register('phoneNumber')}
+                  {...form.register('phone_number')}
                   className='col-span-3'
                 />
               </div>
@@ -135,18 +119,14 @@ export function EditStudentSheet({ student, courses }: EditStudentSheetProps) {
                   </FormItem>
                 )}
               />
-            </div>
+            </div> */}
 
-            <SheetFooter>
-              <Button
-                type='submit'
-                disabled={navigation.state === 'submitting'}
-              >
-                Save changes
-              </Button>
-            </SheetFooter>
-          </RemixForm>
-        </Form>
+          {/* <SheetFooter>
+            <Button type='submit' disabled={navigation.state === 'submitting'}>
+              Save changes
+            </Button>
+          </SheetFooter> */}
+        </RemixForm>
       </SheetContent>
     </Sheet>
   );

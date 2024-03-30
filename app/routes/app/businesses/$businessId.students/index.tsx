@@ -1,9 +1,4 @@
 import { Outlet, useLoaderData } from '@remix-run/react';
-import { StudentInDatagrid } from './_components/DataGrid';
-
-import { StudentClassMapType } from '~/types/collection';
-import { createClient } from '@supabase/supabase-js';
-import { Database } from '~/types/supabase';
 import { AddStudentSheet } from './_components/AddStudentSheet';
 import {
   ActionFunctionArgs,
@@ -17,7 +12,10 @@ import {
 import { getStudentsSearchParams } from '~/helper/students.helper';
 import { getAllCourses } from '~/server/courses/courses.server';
 import StudentsDataTable from '~/components/students/StudentsTable';
-import { editAndDeleteStudentColumn } from '~/components/students/StudentsDataTableColumns';
+import {
+  editAndDeleteStudentColumn,
+  schoolColumn,
+} from '~/components/students/StudentsDataTableColumns';
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const businessId = params.businessId;
@@ -82,71 +80,11 @@ function StudentsLayout() {
       </div>
       <StudentsDataTable
         data={students}
-        extraColumns={[editAndDeleteStudentColumn]}
+        extraColumns={[schoolColumn, editAndDeleteStudentColumn]}
       />
       <Outlet />
     </>
   );
-}
-
-async function updateData(updatedData: StudentInDatagrid[]) {
-  const supabase = createClient<Database>(
-    window.ENV.SUPABASE_URL,
-    window.ENV.SUPABASE_ANON_KEY
-  );
-
-  const studentCourseMap = updatedData.reduce(
-    (acc: StudentClassMapType[], cur) => {
-      const { id, courseIds } = cur;
-
-      const array = courseIds.map((cid) => ({
-        studentId: id,
-        courseId: cid,
-      }));
-
-      return acc.concat(array);
-    },
-    []
-  );
-
-  // TODO: the work below should be handled in a safe and sequencial way.
-
-  const { error } = await supabase.from('students').upsert(
-    updatedData.map((student) => ({
-      id: student.id,
-      name: student.name,
-      phoneNumber: student.phoneNumber,
-      email: student.email,
-    }))
-  );
-
-  if (error) {
-    return { error };
-  }
-
-  const { error: deleteError } = await supabase
-    .from('students_classes_map')
-    .delete()
-    .neq('id', 0);
-
-  if (deleteError) {
-    return { error: deleteError };
-  }
-
-  const { error: insertError } = await supabase
-    .from('students_classes_map')
-    .insert(
-      studentCourseMap.map((data) => ({
-        student_id: data.studentId,
-        class_id: data.courseId,
-      }))
-    );
-
-  if (insertError) {
-    return { error: insertError };
-  }
-
-  return { success: true };
 }
 
 export default StudentsLayout;

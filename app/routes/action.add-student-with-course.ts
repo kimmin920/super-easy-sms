@@ -1,52 +1,18 @@
 import { ActionFunctionArgs, redirect } from '@remix-run/node';
-import { createServerClient } from '@supabase/auth-helpers-remix';
-import { Database } from '~/types/supabase';
+import { addOneStudent } from '~/server/students/students.server';
 
 export async function action({ request }: ActionFunctionArgs) {
-  const response = new Response();
-
   const { searchParams } = new URL(request.url);
   const businessId = searchParams.get('businessId');
 
-  const supabaseClient = createServerClient<Database>(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_ANON_KEY!,
-    { request, response }
-  );
-
-  const body = await request.formData();
-  const values = Object.fromEntries(body);
-
-  const {
-    data: { user },
-  } = await supabaseClient.auth.getUser();
-
-  if (!user) {
-    return redirect('/500');
+  if (!businessId) {
+    throw redirect('/400');
   }
 
-  const { data: newStudent, error } = await supabaseClient
-    .from('students')
-    .insert({
-      name: values.name,
-      email: values.email,
-      phoneNumber: values.phoneNumber,
-      business_id: businessId,
-    })
-    .select()
-    .limit(1)
-    .single();
-
-  if (error || !newStudent) {
-    return redirect('/500');
+  try {
+    await addOneStudent({ request, businessId });
+    return redirect(`/app/businesses/${businessId}/students`);
+  } catch (error) {
+    throw redirect('/500');
   }
-
-  const relationship = values.courseIds.split(',').map((cid) => ({
-    student_id: newStudent.id,
-    class_id: cid,
-  }));
-
-  await supabaseClient.from('students_classes_map').insert(relationship);
-
-  return redirect(`/app/businesses/${businessId}/students`);
 }

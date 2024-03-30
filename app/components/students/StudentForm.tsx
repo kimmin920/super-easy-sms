@@ -7,21 +7,16 @@ import { phoneNumberRegex } from '~/constants/regex';
 import TextAreaFormItem from '../formItems/TextAreaFormItem';
 import RadioFormItem, { RadioOption } from '../formItems/RadioFormItem';
 import { Button } from '@/components/ui/button';
-import SelectFormItem, { SelectOption } from '../formItems/SelectFormItem';
-
-// export const DEFAULT_STUDENT: Partial<StudentFormType> = {
-//   email: '',
-//   name: '',
-//   phoneNumber: '',
-// };
+import { SelectOption } from '../formItems/SelectFormItem';
+import CoursesFormItem from '../formItems/CoursesFormItem';
 
 const StudentFormSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }).min(5),
   name: z.string().min(1),
-  phoneNumber: z.string().regex(phoneNumberRegex, 'Invalid PhoneNumber'),
+  phone_number: z.string().regex(phoneNumberRegex, 'Invalid PhoneNumber'),
   birthday: z.date({ coerce: true }),
-  courseIds: z.array(z.string()).optional(),
-  notificationType: z.enum(['Email', 'SMS', 'Kakao']),
+  courseIds: z.array(z.object({ value: z.string() })).optional(),
+  preferredNotificationType: z.enum(['EMAIL', 'SMS', 'KAKAO']),
   school: z.string().max(50).optional(),
   note1: z.string().max(200).optional(),
   note2: z.string().max(200).optional(),
@@ -34,12 +29,12 @@ export const NOTIFICATION_OPTIONS: RadioOption[] = [
     disabled: false,
   },
   {
-    value: 'Email',
+    value: 'EMAIL',
     label: 'Email',
     disabled: true,
   },
   {
-    value: 'Kakao',
+    value: 'KAKAO',
     label: 'Kakao',
     disabled: true,
   },
@@ -48,9 +43,9 @@ export const NOTIFICATION_OPTIONS: RadioOption[] = [
 export type StudentFormType = z.infer<typeof StudentFormSchema>;
 
 export type StudentFormProps = {
-  defaultValues: Partial<StudentFormType>;
+  defaultValues: StudentFormType;
   courseOptions: SelectOption[];
-  onSubmit: SubmitHandler<StudentFormType>;
+  onSubmit?: SubmitHandler<StudentFormType>;
 };
 
 function StudentForm({
@@ -72,111 +67,114 @@ function StudentForm({
 
   return (
     <FormProvider {...form}>
-      <form
+      {/* <form
         onSubmit={form.handleSubmit(onSubmit, onError)}
         className='space-y-4'
-      >
-        <FormField
-          name='name'
-          control={form.control}
-          render={({ field }) => (
-            <NormalInputFormItem {...field} type='text' aria-label='이름' />
-          )}
-        />
+      > */}
+      <FormField
+        name='name'
+        control={form.control}
+        render={({ field }) => (
+          <NormalInputFormItem {...field} type='text' aria-label='이름' />
+        )}
+      />
 
-        <FormField
-          name='email'
-          control={form.control}
-          render={({ field }) => (
-            <NormalInputFormItem
-              {...field}
-              type='email'
-              aria-label='학생 이메일'
-              aria-description='연락받을 이메일을 입력하세요.'
-            />
-          )}
-        />
+      <FormField
+        name='email'
+        control={form.control}
+        render={({ field }) => (
+          <NormalInputFormItem
+            {...field}
+            type='email'
+            aria-label='학생 이메일'
+            aria-description='연락받을 이메일을 입력하세요.'
+          />
+        )}
+      />
 
-        <FormField
-          name='phoneNumber'
-          control={form.control}
-          render={({ field }) => (
-            <NormalInputFormItem {...field} type='text' aria-label='전화번호' />
-          )}
-        />
+      <FormField
+        name='phone_number'
+        control={form.control}
+        render={({ field }) => (
+          <NormalInputFormItem {...field} type='text' aria-label='전화번호' />
+        )}
+      />
 
-        <FormField
-          name='courseIds'
-          control={form.control}
-          render={({ field }) => (
-            <SelectFormItem
-              {...field}
-              aria-label='수업'
-              aria-placeholder='수업을 선택하세요'
-              options={courseOptions}
-            />
-          )}
-        />
+      <FormField
+        name='courseIds'
+        control={form.control}
+        render={({ field }) => (
+          <CoursesFormItem
+            {...field}
+            control={form.control}
+            name={field.name}
+            aria-label='수업'
+            aria-placeholder='수업을 선택하세요'
+            aria-description='설명입니다 설명'
+            options={[...courseOptions]}
+          />
+        )}
+      />
 
-        <FormField
-          name='notificationType'
-          control={form.control}
-          render={({ field }) => (
-            <RadioFormItem
-              {...field}
-              options={NOTIFICATION_OPTIONS}
-              onValueChange={field.onChange}
-              aria-label='알림수신 방법'
-            />
-          )}
-        />
+      <FormField
+        name='preferredNotificationType'
+        control={form.control}
+        render={({ field }) => (
+          <RadioFormItem
+            {...field}
+            options={NOTIFICATION_OPTIONS}
+            onValueChange={field.onChange}
+            aria-label='알림수신 방법'
+          />
+        )}
+      />
 
-        <FormField
-          name='birthday'
-          control={form.control}
-          render={({ field }) => (
-            <NormalInputFormItem
-              {...field}
-              type='date'
-              aria-label='생년월일'
-              value={
-                field.value instanceof Date
-                  ? field.value.toISOString().substring(0, 10)
-                  : ''
-              }
-              onChange={(e) => field.onChange(new Date(e.target.value))}
-            />
-          )}
-        />
+      <FormField
+        name='birthday'
+        control={form.control}
+        render={({ field }) => (
+          <NormalInputFormItem
+            {...field}
+            type='date'
+            aria-label='생년월일'
+            value={
+              field.value instanceof Date
+                ? field.value.toISOString().substring(0, 10)
+                : ''
+            }
+            onChange={(e) => field.onChange(new Date(e.target.value))}
+          />
+        )}
+      />
 
-        <FormField
-          name='school'
-          control={form.control}
-          render={({ field }) => (
-            <NormalInputFormItem {...field} type='text' aria-label='학교' />
-          )}
-        />
+      <FormField
+        name='school'
+        control={form.control}
+        render={({ field }) => (
+          <NormalInputFormItem {...field} type='text' aria-label='학교' />
+        )}
+      />
 
-        <FormField
-          name='note1'
-          control={form.control}
-          render={({ field }) => (
-            <TextAreaFormItem {...field} aria-label='메모1' />
-          )}
-        />
+      <FormField
+        name='note1'
+        control={form.control}
+        render={({ field }) => (
+          <TextAreaFormItem {...field} aria-label='메모1' />
+        )}
+      />
 
-        <FormField
-          name='note2'
-          control={form.control}
-          render={({ field }) => (
-            <TextAreaFormItem {...field} aria-label='메모2' />
-          )}
-        />
+      <FormField
+        name='note2'
+        control={form.control}
+        render={({ field }) => (
+          <TextAreaFormItem {...field} aria-label='메모2' />
+        )}
+      />
 
-        <Button type='submit' disabled={!isSubmittable}>
-          제출
-        </Button>
-      </form>
+      <Button type='submit' disabled={!isSubmittable}>
+        제출
+      </Button>
+      {/* </form> */}
     </FormProvider>
   );
 }

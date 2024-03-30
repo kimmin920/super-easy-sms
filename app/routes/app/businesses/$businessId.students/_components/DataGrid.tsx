@@ -42,7 +42,7 @@ function DataGrid({ students, courses, updateData }: Props) {
       title: '이름',
     },
     {
-      ...keyColumn('phoneNumber', textColumn),
+      ...keyColumn('phone_number', textColumn),
       title: '전화번호',
     },
     {

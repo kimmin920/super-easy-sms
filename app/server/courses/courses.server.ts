@@ -17,5 +17,9 @@ export async function getAllCourses({
     .select()
     .eq('business_id', businessId);
 
-  return { courses: data ?? [], error };
+  if (error) {
+    throw error;
+  }
+
+  return { courses: data };
 }

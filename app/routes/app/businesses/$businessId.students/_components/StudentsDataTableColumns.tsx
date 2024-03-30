@@ -40,7 +40,9 @@ export const StudentsDataTableColumns: ColumnDef<StudentWithCourse>[] = [
     accessorKey: 'active',
     header: 'Status',
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue('active') === true ? '재원생' : '퇴원생(?)'}</div>
+      <div className='capitalize'>
+        {row.getValue('active') === true ? '재원생' : '퇴원생(?)'}
+      </div>
     ),
   },
   {
@@ -64,10 +66,10 @@ export const StudentsDataTableColumns: ColumnDef<StudentWithCourse>[] = [
     cell: ({ row }) => <div className='lowercase'>{row.getValue('email')}</div>,
   },
   {
-    accessorKey: 'phoneNumber',
+    accessorKey: 'phone_number',
     header: 'Phone number',
     cell: ({ row }) => {
-      return <div>{row.getValue('phoneNumber')}</div>;
+      return <div>{row.getValue('phone_number')}</div>;
     },
   },
   {

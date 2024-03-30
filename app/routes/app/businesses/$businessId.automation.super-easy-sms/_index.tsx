@@ -9,12 +9,10 @@ import { DatePickerWithRange } from '~/components/DatePickerWithRange';
 import SMSTemplateSwitcher from './_components/SMSTemplateSwitcher';
 import TemplateParser from './_components/TemplateParser';
 import { EnvelopeOpenIcon, GearIcon, ReloadIcon } from '@radix-ui/react-icons';
-import { getDatesBetween, templateMessageInjector } from './utils';
+import { templateMessageInjector } from './utils';
 import { createClient } from '@supabase/supabase-js';
 import { useLoaderData, useSearchParams } from '@remix-run/react';
 import { Database, Json } from '~/types/supabase';
-import { CourseType } from '~/types/collection';
-import { DayInString } from '~/types/day';
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -41,20 +39,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { parseCourseSchedules } from '../$businessId.classes/_components/EditClassSheet';
 import { getStudentsSearchParams } from '~/helper/students.helper';
 import { getManyStudents } from '~/server/students/students.server';
 import { getAllCourses } from '~/server/courses/courses.server';
 import { getAllTemplates } from '~/server/templates/templates.server';
 import StudentsDataTable from '~/components/students/StudentsTable';
-import {
-  ClassesWithPayment,
-  SuperEasySmsColumns,
-  SuperEasySmsStudentType,
-  paymentColumn,
-} from '~/components/students/SuperEasySmsColumns';
+import { paymentColumn } from '~/components/students/SuperEasySmsColumns';
 import { getStudentsPayments } from './helpers/studentsParser';
-import { Responsive } from '@tsparticles/engine';
 import TuitionFeeSettlement from '~/components/students/TuitionFeeSettlement';
 
 export const loader = async ({ params, request }: LoaderFunctionArgs) => {
@@ -334,7 +325,7 @@ function SuperEasySms() {
             <div className='flex text-right font-medium items-center gap-2'>
               <Button disabled>Kakao</Button>
 
-              <a href={`sms:${currentStudent.phoneNumber}&body=${message}`}>
+              <a href={`sms:${currentStudent.phone_number}&body=${message}`}>
                 <Button>
                   <EnvelopeOpenIcon className='mr-2 h-4 w-4' /> SMS
                 </Button>

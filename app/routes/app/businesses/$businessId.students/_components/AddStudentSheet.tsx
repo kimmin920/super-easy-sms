@@ -1,10 +1,8 @@
-import { Button } from '@/components/ui/button';
 import { Form as RemixForm, useNavigation } from '@remix-run/react';
 import {
   Sheet,
   SheetContent,
   SheetDescription,
-  SheetFooter,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -40,8 +38,9 @@ export function AddStudentSheet({ courses }: AddStudentSheetProps) {
         </SheetHeader>
 
         <RemixForm
-          method='post'
+          method='POST'
           action={`/action/add-student-with-course?businessId=${businessId}`}
+          className='space-y-3'
         >
           <StudentForm
             defaultValues={{}}
@@ -49,7 +48,6 @@ export function AddStudentSheet({ courses }: AddStudentSheetProps) {
               label: course.name!,
               value: course.id.toString()!,
             }))}
-            onSubmit={console.log}
           />
 
           {/* <SheetFooter>

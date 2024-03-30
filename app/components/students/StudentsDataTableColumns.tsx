@@ -66,10 +66,10 @@ export const StudentsDataTableColumns: ColumnDef<StudentWithCourse>[] = [
     cell: ({ row }) => <div className='lowercase'>{row.getValue('email')}</div>,
   },
   {
-    accessorKey: 'phoneNumber',
+    accessorKey: 'phone_number',
     header: 'Phone number',
     cell: ({ row }) => {
-      return <div>{row.getValue('phoneNumber')}</div>;
+      return <div>{row.getValue('phone_number')}</div>;
     },
   },
   {
@@ -122,5 +122,13 @@ export const editAndDeleteStudentColumn: ColumnDef<StudentWithCourse> = {
         </DropdownMenuContent>
       </DropdownMenu>
     );
+  },
+};
+
+export const schoolColumn: ColumnDef<StudentWithCourse> = {
+  accessorKey: 'school',
+  header: '학교',
+  cell: ({ row }) => {
+    return <div>{row.getValue('school')}</div>;
   },
 };

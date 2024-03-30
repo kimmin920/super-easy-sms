@@ -1,3 +1,4 @@
+import { getOneStudent } from '~/server/students/students.server';
 import { Database } from './supabase';
 import type { User } from '@supabase/gotrue-js/src/lib/types';
 
@@ -42,3 +43,7 @@ export interface SupabaseUserType extends User {
 }
 
 export type BusinessFormType = Pick<BusinessType, 'name' | 'plan'>;
+
+export type StudentJoinCoursesType = Awaited<
+  ReturnType<typeof getOneStudent>
+>['student'];
